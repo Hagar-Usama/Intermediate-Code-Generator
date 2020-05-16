@@ -57,6 +57,11 @@ class Node():
         self.right = None
         self.depth = depth
         self.id = get_node_uuid()
+        self.leaves = []
+    
+    def __del__(self):
+        #print('Destructor called, vehicle deleted.')
+        pass
 
     def build_tree(self, action_list):
         '''
@@ -92,6 +97,9 @@ class Node():
 
                 for j in n:
                     nodes_list.append(j)
+            else:
+                # it's match or consume
+                self.leaves.append(current_node)
             
 
 
@@ -132,5 +140,14 @@ act = post_modify_actions_2(act)
 print_dark_cyan(act)
 root = Node("E", None)
 root.build_tree(act)
-
+x = root.children[1].children[1].children[0].children[1].children[1].children[0].children[0].name
+x = root.children[1].children[1].children[0].children[0].depth
+y = root.children[0].children[0]
+z = y.children[0]
+#del y
+print(x)
+print(z.name)
+print(root.leaves)
+#print(y.name)
+#print(y.name)
         

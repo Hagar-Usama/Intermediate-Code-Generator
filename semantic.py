@@ -79,7 +79,8 @@ def list_them(actions):
 def split_actions(action):
     
     if len(action) == 2:
-        return action[0],action[1]
+        if action[1] != ['not found']:
+            return action[0],action[1]
     else:
         return action[0]
 
