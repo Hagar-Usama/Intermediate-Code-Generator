@@ -1,8 +1,12 @@
 public class Test{
     public static void main(String[] args){
-        String x = "Hi"
+        int x = 5;
 
-        System.out.println(x)
+        int y;
+
+        y = x +5;
+
+        float g;
 
     }
  
