@@ -127,21 +127,21 @@ class Node():
         
         while nodes_list:
             current_node = nodes_list.pop(-1)
-            print("_"*current_node.depth, end='_' )
-            print_dark_cyan(f"Name: {current_node.name}")
+            print("---"*(current_node.depth), end='' )
+            print_dark_cyan(f"Node Name: {current_node.name}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
             
-
             l = []
             for n in current_node.children:
-                l.append(n)
+                l.insert(0,n)
                 #print("_"*n.depth, end='-' )
                 #print_yellow(f"Child Name: {n.name}, Id: {n.id}")
                 #print_yellow(f"Child Name: {n.name}")
-            for n in l:
-                nodes_list.append(l.pop(-1))
-        
+
+            for j in l:
+                nodes_list.append(j)
+            
 
 
 
@@ -191,7 +191,7 @@ print(z.name)
 print(root.leaves)
 
 
-root.show_tree()
+#root.show_tree()
 root.show_tree_2()
 #print(y.name)
 #print(y.name)
