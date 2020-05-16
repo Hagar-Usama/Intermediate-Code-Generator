@@ -100,7 +100,48 @@ class Node():
             else:
                 # it's match or consume
                 self.leaves.append(current_node)
+    
+    def show_tree(self):
+
+        nodes_list = [self]
+        current_node = self
+
+        
+        while nodes_list:
+            current_node = nodes_list.pop(0)
+            print("---"*current_node.depth, end='-' )
+            print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
             
+
+            
+            for n in current_node.children:
+                nodes_list.append(n)
+                print("---"*n.depth, end='-' )
+                print_yellow(f"Child Name: {n.name}, Id: {n.id}")
+
+    def show_tree_2(self):
+
+        nodes_list = [self]
+        current_node = self
+
+        
+        while nodes_list:
+            current_node = nodes_list.pop(-1)
+            print("_"*current_node.depth, end='_' )
+            print_dark_cyan(f"Name: {current_node.name}")
+
+            #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
+            
+
+            l = []
+            for n in current_node.children:
+                l.append(n)
+                #print("_"*n.depth, end='-' )
+                #print_yellow(f"Child Name: {n.name}, Id: {n.id}")
+                #print_yellow(f"Child Name: {n.name}")
+            for n in l:
+                nodes_list.append(l.pop(-1))
+        
 
 
 
@@ -148,6 +189,10 @@ z = y.children[0]
 print(x)
 print(z.name)
 print(root.leaves)
+
+
+root.show_tree()
+root.show_tree_2()
 #print(y.name)
 #print(y.name)
         
