@@ -27,6 +27,38 @@ def print_red(msg):
 def print_green(msg):
     print(f"{ANSI_GREEN}{msg}{ANSI_RESET}")
 
+def test_modify_actions():
+
+    case = 'test modify actions [case 1]'
+    actions = ["E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['+', 'E']", 'Match : +', "E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['*', 'T']", 'Match : *', "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['𝛆']", 'Consume 𝛆', 'Match : $', 'Success']
+
+    actual_value = modify_actions(actions)
+    correct_value = None
+    assert_it(correct_value, None, case )
+    case = 'test modify actions [case 2]'
+
+    actions = [
+     "METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+     "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+     'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+     "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+     'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'",
+      "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+      "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+      "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+      'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']',
+      "Match : 'addop'", "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]',
+      "Match : 'id'", 'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'",
+      'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+      'EXPRESSION_2   ⟶   not found', "Match : ';'", 'STATEMENT_LIST_2   ⟶   not found', 'Match : $',
+      'Success']
+
+    
+    actual_value = modify_actions(actions)
+    correct_value = [['METHOD_BODY', "['STATEMENT_LIST']"], ['STATEMENT_LIST', "['STATEMENT', 'STATEMENT_LIST_2']"], ['STATEMENT', "['DECLARATION']"], ['DECLARATION', '[\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]'], ['PRIMITIVE_TYPE', '["\'int\'"]'], ["Match : 'int'"], ["Match : 'id'"], ["Match : ';'"], ['STATEMENT_LIST_2', "['STATEMENT', 'STATEMENT_LIST_2']"], ['STATEMENT', "['ASSIGNMENT']"], ['ASSIGNMENT', '["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]'], ["Match : 'id'"], ["Match : 'assign'"], ['EXPRESSION', "['SIMPLE_EXPRESSION', 'EXPRESSION_2']"], ['SIMPLE_EXPRESSION', "['TERM', 'SIMPLE_EXPRESSION_2']"], ['TERM', "['FACTOR', 'TERM_2']"], ['FACTOR', '["\'id\'"]'], ["Match : 'id'"], ['TERM_2', "['𝛆']"], 'Consume 𝛆', ['SIMPLE_EXPRESSION_2', '["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']'], ["Match : 'addop'"], ['TERM', "['FACTOR', 'TERM_2']"], ['FACTOR', '["\'id\'"]'], ["Match : 'id'"], ['TERM_2', '["\'mulop\'", \'FACTOR\', \'TERM_2\']'], ["Match : 'mulop'"], ['FACTOR', '["\'num\'"]'], ["Match : 'num'"], ['TERM_2', "['𝛆']"], 'Consume 𝛆', ['SIMPLE_EXPRESSION_2', "['𝛆']"], 'Consume 𝛆', ['EXPRESSION_2', "['𝛆']"], 'Consume 𝛆', ["Match : ';'"], ['STATEMENT_LIST_2', "['𝛆']"], 'Consume 𝛆', ['Match : $'], ['Success']]
+    assert_it(correct_value, actual_value, case )
+
+
 
 def test_node_tree():
     case = 'test node tree [case 1]'
@@ -46,6 +78,94 @@ def test_node_tree():
     correct_value = 4
     assert_it(correct_value, actual_value, case)
 
+    case = 'test node tree [case 3]'
+    actual_value = root.children[0].children[1].children[0]
+    correct_value = '𝛆'
+    assert_it(correct_value, actual_value.name, case)
+
+    print(f"first address {actual_value}")
+    print(f"first address {id(actual_value)}")
+    print(f"second address {root.leaves[0]}")
+
+    
+    case = 'test node tree [case 4]'
+    actions = [
+     "METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+     "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+     'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+     "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+     'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'",
+      "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+      "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+      "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+      'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']',
+      "Match : 'addop'", "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]',
+      "Match : 'id'", 'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'",
+      'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+      'EXPRESSION_2   ⟶   not found', "Match : ';'", 'STATEMENT_LIST_2   ⟶   not found', 'Match : $',
+      'Success']
+
+    act = modify_actions(actions)
+    act = post_modify_actions(act)
+    act = post_modify_actions_2(act)
+
+    root = Node("METHOD_BODY", None)
+    root.build_tree(act)
+    actual_value = root.children[0].children[0].children[0].name
+    correct_value = 'DECLARATION'
+    assert_it(correct_value, actual_value, case )
+
+
+    case = 'test node tree [case 4]'
+    actual_value = root.children[0].children[1].children[0].children[0].children[2].children[1].name
+    correct_value = 'EXPRESSION_2'
+    assert_it(correct_value, actual_value, case )
+
+    
+
+def test_simplify_tree():
+
+    case = 'test simplify tree [case 1]'
+    actions = [
+     "METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+     "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+     'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+     "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+     'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'",
+      "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+      "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+      "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+      'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']',
+      "Match : 'addop'", "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]',
+      "Match : 'id'", 'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'",
+      'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+      'EXPRESSION_2   ⟶   not found', "Match : ';'", 'STATEMENT_LIST_2   ⟶   not found', 'Match : $',
+      'Success']
+
+    act = modify_actions(actions)
+    act = post_modify_actions(act)
+    act = post_modify_actions_2(act)
+
+    root = Node("METHOD_BODY", None)
+    root.build_tree(act)
+    root.show_tree_2()
+    root.simplify_tree_2(['𝛆', "\";\""])
+    #root.simplify_tree()
+    root.show_tree_2()
+
+    for leaf in root.leaves:
+        print(leaf.name,end="\t")
+
+
+    actual_value = root.children[0].children[1].children[1].children
+    correct_value = []
+    assert_it(correct_value, actual_value, case )
+
+
+
+
+
+
 
 
 
@@ -64,8 +184,11 @@ def main():
     # Sorted by checklist order, feel free to comment/un-comment
     # any of those functions.
     try:
+        #test_modify_actions()
+        print_blue('*.*.'*15)
         test_node_tree()
         print_blue('*.*.'*15)
+        #test_simplify_tree()
         
 
     except AssertionError as e:

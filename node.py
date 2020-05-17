@@ -58,6 +58,7 @@ class Node():
         self.depth = depth
         self.id = get_node_uuid()
         self.leaves = []
+        self.isleaf = False
     
     def __del__(self):
         #print('Destructor called, vehicle deleted.')
@@ -99,7 +100,9 @@ class Node():
                     nodes_list.append(j)
             else:
                 # it's match or consume
+                #print(f"it is else: {pack}")
                 self.leaves.append(current_node)
+                current_node.isleaf = True
     
     def show_tree(self):
 
@@ -127,7 +130,10 @@ class Node():
         
         while nodes_list:
             current_node = nodes_list.pop(-1)
-            print("---"*(current_node.depth), end='' )
+            print(" |"*(current_node.depth), end='\n' )
+            #print("|",end='')
+            print(" "*(current_node.depth*2), end='--' )
+
             print_dark_cyan(f"Node Name: {current_node.name}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
@@ -141,38 +147,117 @@ class Node():
 
             for j in l:
                 nodes_list.append(j)
-            
 
+    def simplify_tree(self):
 
-
-
-
-'''
-dfs(initial_state, goal):
-            # returns Success or Failure
-
-            frontier = stack.new(initial_state)
-            explored = set.new()
-
-            while not frontier.isEmpty():
-                state = frontier.pop()
-                explored.add(state)
-
-                if goal(state):
-                    return Success(state)
+        # for each leaf that is epsilon 𝛆, remove it, and its parent if it is the only child
+        unwanted = []
+        x = []
+        for leaf in self.leaves:
+            print_yellow(leaf.name)
+            if leaf.name == '𝛆':
+                print_red("it is eps")
+                parent = leaf.parent
+                print_green(parent.children)
+                parent.children = parent.children.remove(leaf)
+                #self.leaves.remove(leaf)
+                x.append(leaf)
                 
-                # note: in a tree the neighbors of a state
-                # are (parent, children)
-                # neighbors are left,right,up,down
-                for neighbor in state.neighbors():
-                    if neighbor not in frontier U explored:
-                        frontier.push(neighbor)
-                    
-            return Failure
- '''
+                
 
-print(get_node_uuid())
-print(get_node_uuid())
+                if not isinstance(parent.children, list):
+                    parent.children = []
+
+                del leaf
+        for i in x:
+            self.leaves.remove(i)       
+            #while unwanted:
+            #    x = unwanted.pop(-1)
+            #    del x
+    
+    def simplify_tree_2(self, terminal_list):
+        '''
+        [1] enter list of unwanted terminals
+        [2] compare it with leaves and extract nodes
+
+        simplify:
+        [1] enqueue first element in removed in queue
+        [2] while Q is not empty:
+            n = Q.deQ
+            if removed not empty:
+                n.children.remove(removed.deQ)
+            if n has no children:
+                Q.enQ(n.parent)
+                n.parent.children.remove(n)
+        
+        '''
+        rem = []
+        for i in terminal_list:
+            for leaf in self.leaves:
+                print(f"leaf name is {leaf.name}")
+                if leaf.name == i:
+                    rem.append(leaf)
+
+
+        print(f"rem is : {rem}")
+
+        for i in rem:
+            print(i.name,end="\t")
+        
+
+        node_list = []
+        node_list.append(rem[0].parent)
+
+        for i in node_list:
+            print(i.name,end="\t")
+
+        while node_list:
+            n = node_list.pop(0)
+            if rem:
+                print(f"n.children {n.children}")
+                print(f"rem[0] {rem[0]}")
+                n.children.remove(rem.pop(0))
+            if not n.children:
+                node_list.append(n.parent)
+                n.parent.children.remove(n)
+
+            
+    def simplify_it(self, terminal_list):
+
+        terminal_list = set(terminal_list)
+
+        q = []
+        l = []
+        
+        for i in self.leaves:
+            if i.name in terminal_list:
+                l.append(i)
+
+        q.append(l[0].parent)
+        while q:
+            n = q.pop(0)
+            if l:
+                x = l.pop(0)
+                print(f'x is {x}')
+                print(f'n children {n.children}')
+                if x in n.children:
+                    n.children.remove(x)
+
+            if not n.children:
+                q.append(n.parent)
+                # remove n
+                x = n
+                y = n.parent
+                print(f"n adrs = {n}")
+                print(f"y adrs = {y.children}")
+                y.children.remove(x)
+                
+
+
+
+
+#print(get_node_uuid())
+#print(get_node_uuid())
 
 actions = ["E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['+', 'E']", 'Match : +', "E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['*', 'T']", 'Match : *', "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['𝛆']", 'Consume 𝛆', 'Match : $', 'Success']
 act = modify_actions(actions)
@@ -181,18 +266,34 @@ act = post_modify_actions_2(act)
 print_dark_cyan(act)
 root = Node("E", None)
 root.build_tree(act)
-x = root.children[1].children[1].children[0].children[1].children[1].children[0].children[0].name
-x = root.children[1].children[1].children[0].children[0].depth
-y = root.children[0].children[0]
-z = y.children[0]
-#del y
-print(x)
-print(z.name)
-print(root.leaves)
+root.leaves[0].name = "Hallo"
+root.show_tree_2()
+
+
+
+print(root.leaves[0])
+
+
+root.simplify_it(['𝛆'])
+root.show_tree_2()
+
+
 
 
 #root.show_tree()
+""" 
+for i in root.leaves:
+    print(i.name)
+
+print(len(root.leaves))
+root.simplify_tree()
 root.show_tree_2()
+print(len(root.leaves))
+
+for i in root.leaves:
+    print(i.name)
+
+"""
 #print(y.name)
 #print(y.name)
         

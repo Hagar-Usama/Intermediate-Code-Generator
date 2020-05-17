@@ -7,16 +7,25 @@ def modify_actions(actions):
     '''
     action_list = []
 
+
     for action in actions:
         x = action.split("⟶")
         y = []
         for i in x:
-            print(y)
             y.append(i.strip())
-        if len(y) > 0:
+        
+
+        if len(y) ==2:
+            if y[1] == "not found":
+                y[1] = "['𝛆']"
+                action_list.append(y)
+                action_list.append('Consume 𝛆')
+            else:
+                action_list.append(y)
+        else:
             action_list.append(y)
 
-    #print(action_list)
+
     return action_list
 
 
@@ -74,7 +83,7 @@ def list_them(actions):
     for action in actions:
         if isinstance(action, list):
             action_list.append(list_it(action_list))
-    print(action_list)
+    #print(action_list)
 
 def split_actions(action):
     
