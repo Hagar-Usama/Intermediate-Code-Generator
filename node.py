@@ -134,7 +134,7 @@ class Node():
             #print("|",end='')
             print(" "*(current_node.depth*2), end='--' )
 
-            print_dark_cyan(f"Node Name: {current_node.name}")
+            print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
             
@@ -233,24 +233,32 @@ class Node():
             if i.name in terminal_list:
                 l.append(i)
 
+        for i in l:
+            print(f"{i.name}, {i}")
+            q.append(i.parent)
+
+
         q.append(l[0].parent)
+        print(f"q : {q[0]}")
         while q:
             n = q.pop(0)
             if l:
                 x = l.pop(0)
-                print(f'x is {x}')
-                print(f'n children {n.children}')
-                if x in n.children:
-                    n.children.remove(x)
+                print(f'list is {x.name}, {x}')
+                print(f'n children {n.name} -> {n.children}')
+                #if x in n.children:
+                print("remove child")
+                n.children.remove(x)
 
             if not n.children:
+                print("node has no children")
+                print(f"push the node into q {n.parent.name}")
                 q.append(n.parent)
                 # remove n
                 x = n
                 y = n.parent
-                print(f"n adrs = {n}")
-                print(f"y adrs = {y.children}")
-                y.children.remove(x)
+                if x in y.children:
+                    y.children.remove(x)
                 
 
 
@@ -266,12 +274,8 @@ act = post_modify_actions_2(act)
 print_dark_cyan(act)
 root = Node("E", None)
 root.build_tree(act)
-root.leaves[0].name = "Hallo"
+# root.leaves[0].name = "Hallo"
 root.show_tree_2()
-
-
-
-print(root.leaves[0])
 
 
 root.simplify_it(['𝛆'])
