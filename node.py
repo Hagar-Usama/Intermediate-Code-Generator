@@ -62,8 +62,12 @@ class SymTable:
         self.table[sym.lex] = sym
         self.coolTable[sym.lex] = [sym.type, sym.value]
 
-    def lookup_table(key):
-        pass
+    def lookup_table(self,key):
+        if key in self.coolTable:
+            return self.coolTable[key]
+        else:
+            return []
+        
 
 
 
@@ -81,7 +85,7 @@ class Node():
         self.isleaf = False
         self.lexeme = ''
         self.type = None
-        self.value = None
+        self.value = ''
 
     
     def __del__(self):
@@ -142,6 +146,7 @@ class Node():
                 
             if current_node.children == []:
                 leaves.insert(0,current_node)
+                current_node.isleaf = True
 
         self.leaves = leaves
 
@@ -183,7 +188,7 @@ class Node():
             #print("|",end='')
             print(" "*(current_node.depth*2), end='--' )
 
-            print_dark_cyan(f"Node Name: {current_node.name}")
+            print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}")
             #print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
@@ -342,11 +347,11 @@ class Node():
             current_node = nodes_list.pop(-1)
             if current_node.name == "DECLARATION":
                 print_blue(f"Yay! declaration {current_node.children[1].lexeme}")
-                current_node.type = current_node.children[0].children[0].name
+                current_node.type = current_node.children[0].name
                 current_node.value = current_node.children[1].lexeme
 
                 lex =  current_node.children[1].lexeme
-                stype = current_node.children[0].children[0].name
+                stype = current_node.children[0].name
                 new_sym = Symbol(lex, stype)
                 symtab.add_symbol(new_sym)
             
@@ -432,6 +437,8 @@ class Node():
                     leaf.parent.children.remove(leaf)
                     self.leaves.remove(leaf)
 
+    
+
 
 
 
@@ -482,6 +489,70 @@ def get_value(n):
     for i in n.children:
         get_value(i)
 
+def get_str_val(n):
+    if n.isleaf:
+        val = n.lexeme
+
+    else:
+        for i in n.children:
+            val = get_str_val(i)
+            n.value += val
+
+        print_yellow(n.value)
+
+def get_val_2(n, symtab):
+
+    if n.isleaf:
+        x = check_cat(n)
+        if x == "num":
+            print_purple(n.lexeme)
+            n.value = check_type(n.lexeme)
+            n.type = type(n.value)
+        elif x == "id":
+            print_green(n.lexeme)
+            val = symtab.lookup_table(n.lexeme)
+            if val:
+                n.value = val[1]
+            else:
+                print_red("variable not declared")
+            
+    else:
+
+        if n.name == "mulop":
+            get_val_2(n.children[0], symtab)
+            get_val_2(n.children[1], symtab)
+            n.value = n.children[0] * n.children[1]
+            n.type = type(n.value)
+        elif n.name == "addop":
+            get_val_2(n.children[0], symtab)
+            get_val_2(n.children[1], symtab)
+            n.value = n.children[0] + n.children[1]
+            n.type = type(n.value)
+
+        elif n.name == "assign":
+            n.value = n.children[1].value
+            n.type =  n.children[1].type
+            n.children[0].value = n.value
+            #shall be got from table
+            n.children[0].type = n.type
+        
+        else:
+            for i in n.children:
+                get_val_2(i,symtab)
+
+
+
+def check_cat(n):
+    if n.name == '"id"':
+        return "id"
+    elif n.name == '"num"':
+        return "num"
+    else:
+        return n.name
+
+def check_type(num):
+    int(num) if int(num) == float(num) else float(num)
+    return num
 
 def read_input_list(file_path):
     with open(file_path) as f:

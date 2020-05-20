@@ -1,5 +1,5 @@
 import pytest
-from node import Node, SymTable, Symbol, reduce_tree
+from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2
 from semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
@@ -275,14 +275,18 @@ def test_semantic():
     root.update_leaves()
     root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
     reduce_tree(root)
+    root.update_leaves()
+    #get_str_val(root)
+    
     root.show_tree_2()
     
-
     
     symtab = SymTable()
     root.semantic_analysis(symtab)
     print(symtab.table)
     print(symtab.coolTable)
+
+    get_val_2(root,symtab)
 
     print(len(root.leaves))
 
