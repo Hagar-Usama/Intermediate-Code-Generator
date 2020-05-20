@@ -1,5 +1,5 @@
 import pytest
-from node import Node, SymTable, Symbol
+from node import Node, SymTable, Symbol, reduce_tree
 from semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
@@ -270,8 +270,14 @@ def test_semantic():
     #root.show_tree_2()
     root.simplify_it(['𝛆','";"'])
     root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
-    root.reduce_tree(root)
+
+    reduce_tree(root)
+    root.update_leaves()
+    root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
+    reduce_tree(root)
     root.show_tree_2()
+    
+
     
     symtab = SymTable()
     root.semantic_analysis(symtab)

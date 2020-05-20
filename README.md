@@ -26,7 +26,9 @@ Step Four: IC
 * [x] build parsing tree
 * [x] show tree
 * [x] simplify tree
-* [ ] add lexemes
+* [x] add lexemes
+* [ ] make sure to delete nodes (free/del)
+* [ ] lift operands up
 * [ ] build AST
 * [ ] IC
 * [ ] backpatching

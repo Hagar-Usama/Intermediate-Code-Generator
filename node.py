@@ -127,6 +127,31 @@ class Node():
                 #print(f"it is else: {pack}")
                 self.leaves.append(current_node)
                 current_node.isleaf = True
+
+    def update_leaves(self):
+        leaves = []
+
+        nodes_list = [self]
+        current_node = self
+
+        
+        while nodes_list:
+            current_node = nodes_list.pop(-1)
+            for n in current_node.children:
+                nodes_list.append(n)
+                
+            if current_node.children == []:
+                leaves.insert(0,current_node)
+
+        self.leaves = leaves
+
+
+        for i in self.leaves:
+            print_purple(i.name)
+
+
+
+
     
     def show_tree(self):
 
@@ -337,6 +362,9 @@ class Node():
                     nodes_list.insert(0,child)
 
     def reduce_tree(self,n):
+
+        n = self
+
         if n.isleaf:
             return
 
@@ -348,15 +376,101 @@ class Node():
 
             #self.reduce_tree(n.children[0])
             temp1 = n.parent
+            
+            # if it is not the root
             if temp1 != None:
                 print_yellow(f"temp1 {temp1}")
                 temp2 = n
-                print_yellow(f"temp2 {temp1}")
+                print_yellow(f"temp2 {temp2}")
                 n = n.children[0]
                 n.parent = temp1
                 node_index = temp1.children.index(temp2)
                 temp1.children[node_index] = n
-                n.depth = n.depth - 1       
+                n.depth = n.depth - 1 
+            else:
+                # if parent is root: just remove the child:
+                temp1 = n.children[0]       #to be removed
+                n.children = temp1.children
+
+                # mind you have to delete in other conditions
+                del n
+    
+    def eliminate_exp(self, op_list):
+
+        '''
+        if the node  n is the leftmost child:
+            x = n.parent
+            x.remove(n)
+            while len(x.children)==1:
+                x= x.parent
+
+        '''
+
+        for leaf in self.leaves:
+            if leaf.name in op_list:
+                print_green(f"leaf is: {leaf.name}")
+                # if it is the leftmost
+                if leaf.parent.children[0] == leaf:
+                    
+
+                    x = leaf.parent
+                    x.children.remove(leaf)
+
+                    while len(x.children) == 1:
+                        x = x.parent
+
+
+                    x.name = leaf.name
+                    x.lexeme = leaf.lexeme
+
+                    self.leaves.remove(leaf)
+
+                else:
+                    # for assign
+                    leaf.parent.name = leaf.name
+                    leaf.parent.lexeme = leaf.lexeme
+                    leaf.parent.children.remove(leaf)
+                    self.leaves.remove(leaf)
+
+
+
+
+
+
+
+def reduce_tree(n):
+
+        
+        if n.isleaf:
+            return
+
+        for i in n.children:
+            reduce_tree(i)
+
+        if len(n.children) == 1:
+            print_yellow(f"node is : {n.name}")
+
+            #self.reduce_tree(n.children[0])
+            temp1 = n.parent
+            
+            # if it is not the root
+            if temp1 != None:
+                print_yellow(f"temp1 {temp1}")
+                temp2 = n
+                print_yellow(f"temp2 {temp2}")
+
+                n = n.children[0]
+                
+                n.parent = temp1
+                node_index = temp1.children.index(temp2)
+                temp1.children[node_index] = n
+                n.depth = n.depth - 1 
+            else:
+                # if parent is root: just remove the child:
+                temp1 = n.children[0]       #to be removed
+                n.children = temp1.children
+
+                del n
         
 def get_value(n):
 
