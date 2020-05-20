@@ -45,6 +45,23 @@ def print_red(msg):
 def print_green(msg):
     print(f"{ANSI_GREEN}{msg}{ANSI_RESET}")
 
+class Symbol:
+    def __init__(self, lex,token):
+        self.lex = lex
+        self.token = token
+        self.value = None
+
+
+class SymTable:
+    def __init__(self):
+        self.table = dict
+    
+    def add_symbol(self, sym):
+        self.table.add(sym.lex, sym)
+
+    def lookup_table(key):
+        pass
+
 
 
 class Node():
@@ -60,6 +77,9 @@ class Node():
         self.leaves = []
         self.isleaf = False
         self.lexeme = ''
+        self.type = None
+        self.value = None
+
     
     def __del__(self):
         #print('Destructor called, vehicle deleted.')
@@ -135,7 +155,8 @@ class Node():
             #print("|",end='')
             print(" "*(current_node.depth*2), end='--' )
 
-            print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
+            print_dark_cyan(f"Node Name: {current_node.name}")
+            #print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
             
