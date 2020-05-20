@@ -1,5 +1,5 @@
 import pytest
-from node import Node
+from node import Node, SymTable, Symbol
 from semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
@@ -238,7 +238,56 @@ def test_add_lexemes():
 
 
 
+def test_semantic():
+    case = 'test semantic [case 1]'
+    actions = ["METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+             "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+             'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+             "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+             'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'", "Match : 'assign'",
+             "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']", "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+             "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found',
+             'SIMPLE_EXPRESSION_2   ⟶   not found', 'EXPRESSION_2   ⟶   not found', "Match : ';'",
+             "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['DECLARATION']",
+             'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]', 'PRIMITIVE_TYPE   ⟶   ["\'int\'"]',
+             "Match : 'int'", "Match : 'id'", "Match : ';'", "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+             "STATEMENT   ⟶   ['ASSIGNMENT']", 'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]',
+             "Match : 'id'", "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+             "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+             'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'", 'TERM_2   ⟶   not found',
+             'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']', "Match : 'addop'",
+             "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+             'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'", 'FACTOR   ⟶   ["\'num\'"]',
+             "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+             'EXPRESSION_2   ⟶   not found', "Match : ';'", 'STATEMENT_LIST_2   ⟶   not found', 'Match : $', 'Success']
 
+    act = modify_actions(actions)
+    act = post_modify_actions(act)
+    act = post_modify_actions_2(act)
+
+    root = Node("METHOD_BODY", None)
+    root.build_tree(act)
+    #root.show_tree_2()
+    root.simplify_it(['𝛆','";"'])
+    root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
+    root.reduce_tree(root)
+    root.show_tree_2()
+    
+    symtab = SymTable()
+    root.semantic_analysis(symtab)
+    print(symtab.table)
+    print(symtab.coolTable)
+
+    print(len(root.leaves))
+
+    for i in root.leaves:
+        print(i.name,end="\t")
+
+    actual_value = None
+    correct_value = None
+    assert_it(correct_value, actual_value, case )
+
+    
 
 
 
@@ -262,7 +311,10 @@ def main():
         print_blue('*.*.'*15)
         #test_simplify_tree()
         print_blue('*.*.'*15)
-        test_add_lexemes()
+        #test_add_lexemes()
+        print_blue('*.*.'*15)
+        test_semantic()
+
 
         
 

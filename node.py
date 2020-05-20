@@ -46,18 +46,21 @@ def print_green(msg):
     print(f"{ANSI_GREEN}{msg}{ANSI_RESET}")
 
 class Symbol:
-    def __init__(self, lex,token):
+    def __init__(self, lex, stype):
         self.lex = lex
-        self.token = token
+        self.type = stype
         self.value = None
 
 
 class SymTable:
     def __init__(self):
-        self.table = dict
+        self.table = {}
+        self.coolTable = {}
     
     def add_symbol(self, sym):
-        self.table.add(sym.lex, sym)
+        #check if already exists (duplicate declaration)
+        self.table[sym.lex] = sym
+        self.coolTable[sym.lex] = [sym.type, sym.value]
 
     def lookup_table(key):
         pass
@@ -305,8 +308,65 @@ class Node():
             value.lexeme = lex_list[i]
             #print(i, value)
 
-        
+    def semantic_analysis(self, symtab):
+        nodes_list = [self]
+        current_node = self
 
+        
+        while nodes_list:
+            current_node = nodes_list.pop(-1)
+            if current_node.name == "DECLARATION":
+                print_blue(f"Yay! declaration {current_node.children[1].lexeme}")
+                current_node.type = current_node.children[0].children[0].name
+                current_node.value = current_node.children[1].lexeme
+
+                lex =  current_node.children[1].lexeme
+                stype = current_node.children[0].children[0].name
+                new_sym = Symbol(lex, stype)
+                symtab.add_symbol(new_sym)
+            
+            elif current_node.name == "ASSIGNMENT":
+                print_blue(f"Yay! Assignment {current_node.children[0].name}")
+                #valuee = []
+                get_value(current_node.children[2])
+                #print_green(val)
+                pass
+
+            else:
+                for child in current_node.children:
+                    nodes_list.insert(0,child)
+
+    def reduce_tree(self,n):
+        if n.isleaf:
+            return
+
+        for i in n.children:
+            self.reduce_tree(i)
+
+        if len(n.children) == 1:
+            print_yellow(f"node is : {n.name}")
+
+            #self.reduce_tree(n.children[0])
+            temp1 = n.parent
+            if temp1 != None:
+                print_yellow(f"temp1 {temp1}")
+                temp2 = n
+                print_yellow(f"temp2 {temp1}")
+                n = n.children[0]
+                n.parent = temp1
+                node_index = temp1.children.index(temp2)
+                temp1.children[node_index] = n
+                n.depth = n.depth - 1       
+        
+def get_value(n):
+
+    if n.isleaf:
+        #val.append(n.lexeme) 
+        print_yellow(n.lexeme)
+        #return val
+    
+    for i in n.children:
+        get_value(i)
 
 
 def read_input_list(file_path):
