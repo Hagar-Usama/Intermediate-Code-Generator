@@ -25,7 +25,8 @@ Step Four: IC
 ### Tasks
 * [x] build parsing tree
 * [x] show tree
-* [ ] simplify tree
+* [x] simplify tree
+* [ ] add lexemes
 * [ ] build AST
 * [ ] IC
 * [ ] backpatching

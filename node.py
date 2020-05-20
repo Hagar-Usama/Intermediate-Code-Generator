@@ -59,6 +59,7 @@ class Node():
         self.id = get_node_uuid()
         self.leaves = []
         self.isleaf = False
+        self.lexeme = ''
     
     def __del__(self):
         #print('Destructor called, vehicle deleted.')
@@ -237,35 +238,65 @@ class Node():
             print(f"{i.name}, {i}")
             q.append(i.parent)
 
+        print(len(l))
+        if len(l) > 0 :
+            q.append(l[0].parent)
+            print(f"q : {q[0]}")
 
-        q.append(l[0].parent)
-        print(f"q : {q[0]}")
-        while q:
-            n = q.pop(0)
-            if l:
-                x = l.pop(0)
-                print(f'list is {x.name}, {x}')
-                print(f'n children {n.name} -> {n.children}')
-                #if x in n.children:
-                print("remove child")
-                n.children.remove(x)
-
-            if not n.children:
-                print("node has no children")
-                print(f"push the node into q {n.parent.name}")
-                q.append(n.parent)
-                # remove n
-                x = n
-                y = n.parent
-                if x in y.children:
-                    y.children.remove(x)
-                
+            while q:
+                n = q.pop(0)
+                if l:
+                    x = l.pop(0)
+                    print(f'list is {x.name}, {x}')
+                    print(f'n children {n.name} -> {n.children}')
+                    #if x in n.children:
+                    print("remove child")
+                    if x in self.leaves:
+                        self.leaves.remove(x)
+                    n.children.remove(x)
 
 
+                if not n.children:
+                    print("node has no children")
+                    print(f"push the node into q {n.parent.name}")
+                    q.append(n.parent)
+                    # remove n
+                    x = n
+                    y = n.parent
+                    if x in y.children:
+                        if x in self.leaves:
+                            self.leaves.remove(x)
+                        y.children.remove(x)
 
+    def add_lexemes(self, lex_list):
+        '''
+        search for leaves (tokens)
+        attach lexemes as their children
+        make lexems the leaves
+        '''
+
+        self.simplify_it(['𝛆'])
+
+    
+
+        for i, value in enumerate(self.leaves):
+            #print(f"lex: {lex_list[i]}, token: {value.name}")
+            value.lexeme = lex_list[i]
+            #print(i, value)
+
+        
+
+
+
+def read_input_list(file_path):
+    with open(file_path) as f:
+        lines = [line.rstrip() for line in f]
+    return lines
 
 #print(get_node_uuid())
 #print(get_node_uuid())
+
+
 
 actions = ["E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['+', 'E']", 'Match : +', "E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['*', 'T']", 'Match : *', "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['𝛆']", 'Consume 𝛆', 'Match : $', 'Success']
 act = modify_actions(actions)
@@ -278,8 +309,10 @@ root.build_tree(act)
 root.show_tree_2()
 
 
-root.simplify_it(['𝛆'])
+#root.simplify_it(['𝛆'])
+root.add_lexemes(["int","y",";","y","=","5",";","x","=","y","+","y","*","5",";"])
 root.show_tree_2()
+lexeme_list = ["int","x",";","x","=","y","+","y","*","5"]
 
 
 
