@@ -277,7 +277,10 @@ def test_semantic():
     reduce_tree(root)
     root.update_leaves()
     #get_str_val(root)
-    
+
+
+    root.add_lexemes(["int","y","y","5","int", "x", "x","y","y","5"])
+
     root.show_tree_2()
     
     
@@ -287,6 +290,9 @@ def test_semantic():
     print(symtab.coolTable)
 
     get_val_2(root,symtab)
+
+    root.show_tree_2()
+
 
     print(len(root.leaves))
 

@@ -46,10 +46,10 @@ def print_green(msg):
     print(f"{ANSI_GREEN}{msg}{ANSI_RESET}")
 
 class Symbol:
-    def __init__(self, lex, stype):
+    def __init__(self, lex, stype, value=None):
         self.lex = lex
         self.type = stype
-        self.value = None
+        self.value = value
 
 
 class SymTable:
@@ -61,6 +61,7 @@ class SymTable:
         #check if already exists (duplicate declaration)
         self.table[sym.lex] = sym
         self.coolTable[sym.lex] = [sym.type, sym.value]
+        print_yellow(f"add symbol: {sym.lex}, val: {sym.value}")
 
     def lookup_table(self,key):
         if key in self.coolTable:
@@ -500,49 +501,70 @@ def get_str_val(n):
 
         print_yellow(n.value)
 
+
+
 def get_val_2(n, symtab):
+
+    print_yellow(f"name: {n.name}")
 
     if n.isleaf:
         x = check_cat(n)
         if x == "num":
             print_purple(n.lexeme)
             n.value = check_type(n.lexeme)
+            print_green(type(n.value))
             n.type = type(n.value)
         elif x == "id":
             print_green(n.lexeme)
             val = symtab.lookup_table(n.lexeme)
             if val:
-                n.value = val[1]
+                if val[1] == None:
+                    print_red("variable not assigned")
+                    n.value = 33
+                else:
+                    n.value = val[1]
+                print_blue(f"value : {n.value}")
             else:
                 print_red("variable not declared")
             
     else:
 
-        if n.name == "mulop":
+        if n.name == '"mulop"':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
-            n.value = n.children[0] * n.children[1]
+            n.value = n.children[0].value * n.children[1].value
             n.type = type(n.value)
-        elif n.name == "addop":
+        elif n.name == '"addop"':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
-            n.value = n.children[0] + n.children[1]
+            n.value = n.children[0].value + n.children[1].value
             n.type = type(n.value)
 
-        elif n.name == "assign":
+        elif n.name == '"assign"':
+            get_val_2(n.children[1], symtab) 
+            print_dark_cyan(f"val for assign: {n.children[1].value}")       
             n.value = n.children[1].value
             n.type =  n.children[1].type
             n.children[0].value = n.value
+            
+            new_sym = Symbol(n.children[0].lexeme, n.children[0].type, n.children[0].value)
+
+            symtab.add_symbol(new_sym)
             #shall be got from table
             n.children[0].type = n.type
         
         else:
             for i in n.children:
+                #if i.name !="DECLARATION":
                 get_val_2(i,symtab)
+
+    print(symtab.coolTable)
+
 
 
 
 def check_cat(n):
+    
     if n.name == '"id"':
         return "id"
     elif n.name == '"num"':
@@ -551,9 +573,22 @@ def check_cat(n):
         return n.name
 
 def check_type(num):
-    int(num) if int(num) == float(num) else float(num)
-    return num
+    try:
+        return int(num)
+    except ValueError:
+        return float(num)
 
+    """ 
+    int(num) if int(num) == float(num) else float(num)
+    print_dark_cyan(f"num: {num}")
+    x = int(num)
+    y = float(num)
+    if x == y:
+        return x
+    else:
+        return y
+    
+    """
 def read_input_list(file_path):
     with open(file_path) as f:
         lines = [line.rstrip() for line in f]
