@@ -279,15 +279,17 @@ def test_semantic():
     #get_str_val(root)
 
 
-    root.add_lexemes(["int","y","y","5","int", "x", "x","y","y","5"])
+    root.add_lexemes(["int","y","y","5","int", "x", "x","y","y","7"])
+    
+
 
     root.show_tree_2()
     
     
     symtab = SymTable()
-    root.semantic_analysis(symtab)
-    print(symtab.table)
-    print(symtab.coolTable)
+    #root.semantic_analysis(symtab)
+    #print(symtab.table)
+    #print(symtab.coolTable)
 
     get_val_2(root,symtab)
 

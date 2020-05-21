@@ -67,7 +67,17 @@ class SymTable:
         if key in self.coolTable:
             return self.coolTable[key]
         else:
-            return []
+            return False
+
+    def update_symbol_val(self,key,val):
+
+        x = self.lookup_table(key)
+        if x:
+            x[1] = val
+            self.coolTable[key] = x
+
+
+
         
 
 
@@ -189,7 +199,7 @@ class Node():
             #print("|",end='')
             print(" "*(current_node.depth*2), end='--' )
 
-            print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}")
+            print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}, type:{current_node.type}")
             #print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
@@ -510,35 +520,50 @@ def get_val_2(n, symtab):
     if n.isleaf:
         x = check_cat(n)
         if x == "num":
-            print_purple(n.lexeme)
-            n.value = check_type(n.lexeme)
-            print_green(type(n.value))
-            n.type = type(n.value)
+            #print_purple(n.lexeme)
+            n.value,ntype = check_type(n.lexeme)
+            #print_green(type(n.value))
+            n.type = ntype
+
         elif x == "id":
+
             print_green(n.lexeme)
-            val = symtab.lookup_table(n.lexeme)
-            if val:
-                if val[1] == None:
-                    print_red("variable not assigned")
-                    n.value = 33
+            y = n.parent
+            if n.parent.name != "DECLARATION":
+                val = symtab.lookup_table(n.lexeme)
+                if val:
+                    if val[1] == None:
+                        print_red("variable not assigned")
+                    else:
+                        n.value = val[1]
+                        n.type = val[0]
+                    print_blue(f"id type : {n.type}")
                 else:
-                    n.value = val[1]
-                print_blue(f"value : {n.value}")
+                    print_red("variable not declared")
+                    n.type = "undefined"
             else:
-                print_red("variable not declared")
-            
+                #declaration:
+                new_sym = Symbol(n.lexeme, n.parent.children[0].lexeme)
+                symtab.add_symbol(new_sym)
+                print_red(symtab.coolTable)
+                
     else:
 
         if n.name == '"mulop"':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
             n.value = n.children[0].value * n.children[1].value
-            n.type = type(n.value)
+            #n.type = type(n.value)
+            _,n.type = check_type(n.value)
+
         elif n.name == '"addop"':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
             n.value = n.children[0].value + n.children[1].value
-            n.type = type(n.value)
+            #n.type = type(n.value)
+            #n.type = check_type(n.value)
+            _,n.type = check_type(n.value)
+            print_yellow("n.type = ")
 
         elif n.name == '"assign"':
             get_val_2(n.children[1], symtab) 
@@ -547,9 +572,12 @@ def get_val_2(n, symtab):
             n.type =  n.children[1].type
             n.children[0].value = n.value
             
-            new_sym = Symbol(n.children[0].lexeme, n.children[0].type, n.children[0].value)
+            stype,_ = symtab.lookup_table(n.children[0].lexeme)
+            print_red(f"sytpe is : {stype}")
+            new_sym = Symbol(n.children[0].lexeme, stype, n.children[0].value)
 
             symtab.add_symbol(new_sym)
+            symtab.update_symbol_val(n.children[0].lexeme, n.children[0].value)
             #shall be got from table
             n.children[0].type = n.type
         
@@ -574,9 +602,9 @@ def check_cat(n):
 
 def check_type(num):
     try:
-        return int(num)
+        return int(num),'int'
     except ValueError:
-        return float(num)
+        return float(num),'float'
 
     """ 
     int(num) if int(num) == float(num) else float(num)
