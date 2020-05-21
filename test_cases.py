@@ -274,7 +274,7 @@ def test_semantic():
 
     #reduce_tree(root)
     root.update_leaves()
-    root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
+    root.eliminate_exp({'"addop"', '"mulop"','"relop"', '"assign"'})
     root.show_tree_2()
     #reduce_tree(root)
     root.update_leaves()
@@ -426,7 +426,8 @@ def test_full_input():
     print(f"len(lex)= {len(lex)}")
     
     root.add_lexemes(lex)
-    root.simplify_it(['";"', '"{"','"}"', '"("', '")"'])
+    # mind that additional "" is added
+    root.simplify_it(['";"', '"{"','"}"', '"("', '")"','"if"','"else"','"while"'])
 
     root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
     reduce_tree(root)

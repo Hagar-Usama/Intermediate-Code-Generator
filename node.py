@@ -590,6 +590,12 @@ def get_val_2(n, symtab):
             #shall be got from table
             n.children[0].type = n.type
         
+        elif n.lexeme == '<':
+            get_val_2(n.children[0], symtab)
+            get_val_2(n.children[1], symtab)
+            n.value = int(n.children[0].value < n.children[1].value)
+            _,n.type = check_type(n.value)
+        
         else:
             for i in n.children:
                 #if i.name !="DECLARATION":
