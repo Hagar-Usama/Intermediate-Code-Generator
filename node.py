@@ -549,21 +549,30 @@ def get_val_2(n, symtab):
                 
     else:
 
-        if n.name == '"mulop"':
+        if n.lexeme == '*':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
             n.value = n.children[0].value * n.children[1].value
-            #n.type = type(n.value)
             _,n.type = check_type(n.value)
 
-        elif n.name == '"addop"':
+        elif n.lexeme == '/':
+            get_val_2(n.children[0], symtab)
+            get_val_2(n.children[1], symtab)
+            n.value = n.children[0].value / n.children[1].value
+            _,n.type = check_type(n.value)
+
+        elif n.lexeme == '+':
             get_val_2(n.children[0], symtab)
             get_val_2(n.children[1], symtab)
             n.value = n.children[0].value + n.children[1].value
-            #n.type = type(n.value)
-            #n.type = check_type(n.value)
             _,n.type = check_type(n.value)
-            print_yellow("n.type = ")
+        
+        elif n.lexeme == '-':
+            get_val_2(n.children[0], symtab)
+            get_val_2(n.children[1], symtab)
+            n.value = n.children[0].value - n.children[1].value
+            _,n.type = check_type(n.value)
+
 
         elif n.name == '"assign"':
             get_val_2(n.children[1], symtab) 
@@ -573,7 +582,7 @@ def get_val_2(n, symtab):
             n.children[0].value = n.value
             
             stype,_ = symtab.lookup_table(n.children[0].lexeme)
-            print_red(f"sytpe is : {stype}")
+            #print_red(f"sytpe is : {stype}")
             new_sym = Symbol(n.children[0].lexeme, stype, n.children[0].value)
 
             symtab.add_symbol(new_sym)

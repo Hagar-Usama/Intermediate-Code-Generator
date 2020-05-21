@@ -14,12 +14,16 @@ public class Test{
 
         */
 
-        float i;
+        int y;
+        y =5;
+        int x;
+        x = y+ y*5;
+  /*       float i;
         for(i=0; i<100; i++){
 
 
         }
-
+ */
     }
  
   

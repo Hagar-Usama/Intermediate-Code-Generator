@@ -227,6 +227,7 @@ def test_add_lexemes():
     root.build_tree(act)
     root.show_tree_2()
     root.simplify_it(['𝛆'])
+    root.show_tree_2()
     root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
     #print(root.leaves)
     for i in root.leaves:
@@ -271,18 +272,16 @@ def test_semantic():
     root.simplify_it(['𝛆','";"'])
     root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
 
-    reduce_tree(root)
+    #reduce_tree(root)
     root.update_leaves()
     root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
-    reduce_tree(root)
+    root.show_tree_2()
+    #reduce_tree(root)
     root.update_leaves()
     #get_str_val(root)
 
 
     root.add_lexemes(["int","y","y","5","int", "x", "x","y","y","7"])
-    
-
-
     root.show_tree_2()
     
     
@@ -306,6 +305,138 @@ def test_semantic():
     assert_it(correct_value, actual_value, case )
 
     
+
+def test_lexeme():
+    case = 'test semantic [case 1]'
+    # parse table from phase 2
+    actions = ["METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+             "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+             'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+             "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+             'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'", "Match : 'assign'",
+             "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']", "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+             "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found',
+             'SIMPLE_EXPRESSION_2   ⟶   not found', 'EXPRESSION_2   ⟶   not found', "Match : ';'",
+             "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['DECLARATION']",
+             'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]', 'PRIMITIVE_TYPE   ⟶   ["\'int\'"]',
+             "Match : 'int'", "Match : 'id'", "Match : ';'", "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+             "STATEMENT   ⟶   ['ASSIGNMENT']", 'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]',
+             "Match : 'id'", "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+             "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+             'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'", 'TERM_2   ⟶   not found',
+             'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']', "Match : 'addop'",
+             "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+             'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'", 'FACTOR   ⟶   ["\'num\'"]',
+             "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+             'EXPRESSION_2   ⟶   not found', "Match : ';'", 'STATEMENT_LIST_2   ⟶   not found', 'Match : $', 'Success']
+
+    # modify the parsing table to adapt with this phase
+    act = modify_actions(actions)
+    act = post_modify_actions(act)
+    act = post_modify_actions_2(act)
+
+    root = Node("METHOD_BODY", None)
+    root.build_tree(act)
+
+    # remove epsillon nodes
+    root.simplify_it(['𝛆'])
+    root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
+    root.simplify_it(['";"'])
+    root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
+    reduce_tree(root)
+
+    symtab = SymTable()
+    get_val_2(root,symtab)
+    
+    root.show_tree_2()
+
+    print_yellow(symtab.coolTable)
+
+def test_full_input():
+    case = 'test full input [case 1]'
+
+    actions = ["METHOD_BODY   ⟶   ['STATEMENT_LIST']", "STATEMENT_LIST   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+    "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+    'PRIMITIVE_TYPE   ⟶   ["\'int\'"]', "Match : 'int'", "Match : 'id'", "Match : ';'",
+    "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+    'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'", "Match : 'assign'",
+    "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']", "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+    "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found',
+    'SIMPLE_EXPRESSION_2   ⟶   not found', 'EXPRESSION_2   ⟶   not found', "Match : ';'",
+    "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+    "STATEMENT   ⟶   ['DECLARATION']", 'DECLARATION   ⟶   [\'PRIMITIVE_TYPE\', "\'id\'", "\';\'"]',
+    'PRIMITIVE_TYPE   ⟶   ["\'float\'"]', "Match : 'float'", "Match : 'id'", "Match : ';'",
+    "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['ASSIGNMENT']",
+    'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'", "Match : 'assign'",
+    "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']", "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+    "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'", 'TERM_2   ⟶   not found',
+    'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']', "Match : 'addop'",
+    "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'",
+    'TERM_2   ⟶   ["\'mulop\'", \'FACTOR\', \'TERM_2\']', "Match : 'mulop'", 'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'",
+    'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found', 'EXPRESSION_2   ⟶   not found', "Match : ';'",
+    "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']", "STATEMENT   ⟶   ['IF']",
+    'IF   ⟶   ["\'if\'", "\'(\'", \'EXPRESSION\', "\')\'", "\'{\'", \'STATEMENT\', "\'}\'", "\'else\'", "\'{\'", \'STATEMENT\', "\'}\'"]',
+    "Match : 'if'", "Match : '('", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+    'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+    'EXPRESSION_2   ⟶   ["\'relop\'", \'SIMPLE_EXPRESSION\']', "Match : 'relop'",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'num\'"]',
+    "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found', "Match : ')'", "Match : '{'",
+    "STATEMENT   ⟶   ['ASSIGNMENT']", 'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'",
+    "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+    'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+    'EXPRESSION_2   ⟶   not found', "Match : ';'", "Match : '}'", "Match : 'else'", "Match : '{'",
+    "STATEMENT   ⟶   ['ASSIGNMENT']", 'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'",
+    "Match : 'assign'", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+    'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+    'EXPRESSION_2   ⟶   not found', "Match : ';'", "Match : '}'", "STATEMENT_LIST_2   ⟶   ['STATEMENT', 'STATEMENT_LIST_2']",
+    "STATEMENT   ⟶   ['WHILE']",
+    'WHILE   ⟶   ["\'while\'", "\'(\'", \'EXPRESSION\', "\')\'", "\'{\'", \'STATEMENT\', "\'}\'"]', "Match : 'while'",
+    "Match : '('", "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]',
+    "Match : 'id'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+    'EXPRESSION_2   ⟶   ["\'relop\'", \'SIMPLE_EXPRESSION\']', "Match : 'relop'",
+    "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']", "TERM   ⟶   ['FACTOR', 'TERM_2']",
+    'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found', 'SIMPLE_EXPRESSION_2   ⟶   not found',
+    "Match : ')'", "Match : '{'", "STATEMENT   ⟶   ['ASSIGNMENT']",
+    'ASSIGNMENT   ⟶   ["\'id\'", "\'assign\'", \'EXPRESSION\', "\';\'"]', "Match : 'id'", "Match : 'assign'",
+    "EXPRESSION   ⟶   ['SIMPLE_EXPRESSION', 'EXPRESSION_2']", "SIMPLE_EXPRESSION   ⟶   ['TERM', 'SIMPLE_EXPRESSION_2']",
+    "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'id\'"]', "Match : 'id'", 'TERM_2   ⟶   not found',
+    'SIMPLE_EXPRESSION_2   ⟶   ["\'addop\'", \'TERM\', \'SIMPLE_EXPRESSION_2\']', "Match : 'addop'",
+    "TERM   ⟶   ['FACTOR', 'TERM_2']", 'FACTOR   ⟶   ["\'num\'"]', "Match : 'num'", 'TERM_2   ⟶   not found',
+    'SIMPLE_EXPRESSION_2   ⟶   not found', 'EXPRESSION_2   ⟶   not found', "Match : ';'", "Match : '}'",
+    'STATEMENT_LIST_2   ⟶   not found', 'Match : $', 'Success']
+
+    # modify the parsing table to adapt with this phase
+    act = modify_actions(actions)
+    act = post_modify_actions(act)
+    act = post_modify_actions_2(act)
+
+    root = Node("METHOD_BODY", None)
+    root.build_tree(act)
+
+    # remove epsillon nodes
+    root.simplify_it(['𝛆'])
+    lex = ['int','y',';','y','=','5',';','float','x', ';', 'x', '=', 'y', '+', 'y','*', '2.5', ';',
+            'if','(','x','<','3',')','{','y','=','7',';','}','else','{','y','=','3',';','}',
+            'while','(','y','<','5',')','{','y','=','y','+','1',';','}'
+    ]
+    print(f"len(lex)= {len(lex)}")
+    
+    root.add_lexemes(lex)
+    root.simplify_it(['";"', '"{"','"}"', '"("', '")"'])
+
+    root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
+    reduce_tree(root)
+
+    symtab = SymTable()
+    get_val_2(root,symtab)
+    
+    root.show_tree_2()
+
+    print_yellow(symtab.coolTable)
 
 
 
@@ -331,7 +462,11 @@ def main():
         print_blue('*.*.'*15)
         #test_add_lexemes()
         print_blue('*.*.'*15)
-        test_semantic()
+        #test_semantic()
+        #print_blue('*.*.'*15)
+        #test_lexeme()
+        print_blue('*.*.'*15)
+        test_full_input()
 
 
         
@@ -343,3 +478,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
