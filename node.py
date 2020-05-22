@@ -814,6 +814,20 @@ def generate_code(n, symtab):
             generate_code(n.children[1], symtab)
             
             n.code = 'ifge'
+
+        elif n.name =="IF":
+
+            for i in n.children:
+                generate_code(i, symtab)
+            
+            n.code = n.children[0].code + "        " + "label then"
+            n.code += '\t' + "label else:" 
+            n.code += '\t' + n.children[2].code
+            n.code += '\t' + "goto        " + "label next"
+            n.code += '\t' + "label then:" 
+            n.code += '\t' + n.children[1].code
+            n.code += '\t' + "label next:" 
+
             
         else:
             for i in n.children:
@@ -836,7 +850,7 @@ def print_node(n, option=0):
             print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
     else:
         if n.name in block_list:
-            print_yellow(f"Node Name: {n.name}")
+            print_yellow(f"Node Name: {n.name}, code: {n.code}")
         elif n.name == '"relop"':
             print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, code: {n.code} ")
         else:
