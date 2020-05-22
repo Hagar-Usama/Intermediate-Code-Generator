@@ -33,3 +33,11 @@ Step Four: IC
 * [ ] IC
 * [ ] backpatching
 * [ ] report
+
+## Bugs:
+* [ ] check_type not working properly in some cases
+> added a couple of lines to fixed temporarily
+
+* [ ] get_val_2 & get_virtual shall be the combine.Yet, some functions not working then
+>  * try to add flag <br>
+>  * make it return list of virtual nodes to work with separately

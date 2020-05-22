@@ -1,0 +1,81 @@
+--Node Name: METHOD_BODY, Value: , lex: , type:None
+ | |
+    --Node Name: DECLARATION
+ | | | |
+        --Node Name: "int", Value: , lex: int, type:None
+ | | | |
+        --Node Name: "id", Value: , lex: y, type:None
+ | |
+    --Node Name: STATEMENT_LIST_2
+ | | |
+      --Node Name: "assign", Value: 5, lex: =, type:int
+ | | | | |
+          --Node Name: "id", Value: 5, lex: y, type:int
+ | | | | |
+          --Node Name: "num", Value: 5, lex: 5, type:int
+ | | |
+      --Node Name: STATEMENT_LIST_2
+ | | | |
+        --Node Name: DECLARATION
+ | | | | | |
+            --Node Name: "float", Value: , lex: float, type:None
+ | | | | | |
+            --Node Name: "id", Value: , lex: x, type:None
+ | | | |
+        --Node Name: STATEMENT_LIST_2
+ | | | | |
+          --Node Name: "assign", Value: 17.5, lex: =, type:float
+ | | | | | | |
+              --Node Name: "id", Value: 17.5, lex: x, type:float
+ | | | | | | |
+              --Node Name: "addop", Value: 17.5, lex: +, type:float
+ | | | | | | | | |
+                  --Node Name: "id", Value: 5, lex: y, type:int
+ | | | | | | | | |
+                  --Node Name: "mulop", Value: 12.5, lex: *, type:float
+ | | | | | | | | | | |
+                      --Node Name: "id", Value: 5, lex: y, type:int
+ | | | | | | | | | | |
+                      --Node Name: "num", Value: 2.5, lex: 2.5, type:float
+ | | | | |
+          --Node Name: STATEMENT_LIST_2
+ | | | | | |
+            --Node Name: IF
+ | | | | | | | |
+                --Node Name: "relop", Value: 0, lex: <
+ | | | | | | | | |
+                  --Node Name: "id", Value: 17.5, lex: x, type:float
+ | | | | | | | | |
+                  --Node Name: "num", Value: 3, lex: 3, type:int
+ | | | | | | | |
+                --Node Name: "assign", Value: 7, lex: =, type:int
+ | | | | | | | | | |
+                    --Node Name: "id", Value: 7, lex: y, type:int
+ | | | | | | | | | |
+                    --Node Name: "num", Value: 7, lex: 7, type:int
+ | | | | | | | |
+                --Node Name: "assign", Value: 3, lex: =, type:int
+ | | | | | | | | | |
+                    --Node Name: "id", Value: 3, lex: y, type:int
+ | | | | | | | | | |
+                    --Node Name: "num", Value: 3, lex: 3, type:int
+ | | | | | |
+            --Node Name: WHILE
+ | | | | | | | | |
+                  --Node Name: "relop", Value: 0, lex: <
+ | | | | | | | | | |
+                    --Node Name: "id", Value: 5, lex: y, type:int
+ | | | | | | | | | |
+                    --Node Name: "num", Value: 5, lex: 5, type:int
+ | | | | | | | | |
+                  --Node Name: "assign", Value: 6, lex: =, type:int
+ | | | | | | | | | | |
+                      --Node Name: "id", Value: 6, lex: y, type:int
+ | | | | | | | | | | |
+                      --Node Name: "addop", Value: 6, lex: +, type:int
+ | | | | | | | | | | | | |
+                          --Node Name: "id", Value: 5, lex: y, type:int
+ | | | | | | | | | | | | |
+                          --Node Name: "num", Value: 1, lex: 1, type:int
+
+{'y': ['int', 5], 'x': ['float', 17.5]}

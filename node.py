@@ -199,7 +199,8 @@ class Node():
             #print("|",end='')
             print(" "*(current_node.depth*2), end='--' )
 
-            print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}, type:{current_node.type}")
+            #print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}, type:{current_node.type}")
+            print_node(current_node)
             #print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
@@ -517,7 +518,11 @@ def get_val_2(n, symtab):
 
     print_yellow(f"name: {n.name}")
 
-    if n.isleaf:
+
+    if n.name == "IF" or n.name =="WHILE":
+        pass
+
+    elif n.isleaf:
         x = check_cat(n)
         if x == "num":
             #print_purple(n.lexeme)
@@ -604,6 +609,105 @@ def get_val_2(n, symtab):
     print(symtab.coolTable)
 
 
+def get_val_virtual(n, symtab):
+
+    '''
+    For conditional blocks
+    
+    '''
+
+    print_yellow(f"name: {n.name}")
+
+
+    if n.isleaf:
+        x = check_cat(n)
+        if x == "num":
+            #print_purple(n.lexeme)
+            n.value,ntype = check_type(n.lexeme)
+            #print_green(type(n.value))
+            n.type = ntype
+
+        elif x == "id":
+
+            print_green(n.lexeme)
+            y = n.parent
+            if n.parent.name != "DECLARATION":
+                val = symtab.lookup_table(n.lexeme)
+                if val:
+                    if val[1] == None:
+                        print_red("variable not assigned")
+                    else:
+                        n.value = val[1]
+                        n.type = val[0]
+                    print_blue(f"id type : {n.type}")
+                else:
+                    print_red("variable not declared")
+                    n.type = "undefined"
+            else:
+                #declaration:
+                pass
+                
+    else:
+
+        if n.lexeme == '*':
+            get_val_virtual(n.children[0], symtab)
+            get_val_virtual(n.children[1], symtab)
+            n.value = n.children[0].value * n.children[1].value
+            _,n.type = check_type(n.value)
+
+        elif n.lexeme == '/':
+            get_val_virtual(n.children[0], symtab)
+            get_val_virtual(n.children[1], symtab)
+            n.value = n.children[0].value / n.children[1].value
+            _,n.type = check_type(n.value)
+
+        elif n.lexeme == '+':
+            get_val_virtual(n.children[0], symtab)
+            get_val_virtual(n.children[1], symtab)
+            n.value = n.children[0].value + n.children[1].value
+            _,n.type = check_type(n.value)
+        
+        elif n.lexeme == '-':
+            get_val_virtual(n.children[0], symtab)
+            get_val_virtual(n.children[1], symtab)
+            n.value = n.children[0].value - n.children[1].value
+            _,n.type = check_type(n.value)
+
+
+        elif n.name == '"assign"':
+            get_val_virtual(n.children[1], symtab) 
+            print_dark_cyan(f"val for assign: {n.children[1].value}")       
+            n.value = n.children[1].value
+            n.type =  n.children[1].type
+            n.children[0].value = n.value
+            
+            stype,_ = symtab.lookup_table(n.children[0].lexeme)
+            #shall be got from table
+            n.children[0].type = n.type
+        
+        elif n.lexeme == '<':
+            get_val_virtual(n.children[0], symtab)
+            get_val_virtual(n.children[1], symtab)
+            n.value = int(n.children[0].value < n.children[1].value)
+            _,n.type = check_type(n.value)
+        
+        else:
+            for i in n.children:
+                #if i.name !="DECLARATION":
+                get_val_virtual(i,symtab)
+
+    print(symtab.coolTable)
+
+
+def print_node(n):
+    block_list = ["METHOD_BODY", "WHILE", "IF","DECLARATION", "STATEMENT_LIST_2","STATEMENT_LIST"]
+    if n.name in block_list:
+        print_yellow(f"Node Name: {n.name}")
+    elif n.name == '"relop"':
+        print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}")
+    else:
+         print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
+
 
 
 def check_cat(n):
@@ -616,6 +720,9 @@ def check_cat(n):
         return n.name
 
 def check_type(num):
+
+    if isinstance(num, float):
+        return float(num),'float'
     try:
         return int(num),'int'
     except ValueError:
@@ -641,7 +748,7 @@ def read_input_list(file_path):
 #print(get_node_uuid())
 
 
-
+""" 
 actions = ["E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['+', 'E']", 'Match : +', "E   ⟶   ['T', 'R']", "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['*', 'T']", 'Match : *', "T   ⟶   ['F', 'S']", "F   ⟶   ['n']", 'Match : n', "S   ⟶   ['𝛆']", 'Consume 𝛆', "R   ⟶   ['𝛆']", 'Consume 𝛆', 'Match : $', 'Success']
 act = modify_actions(actions)
 act = post_modify_actions(act)
@@ -657,7 +764,7 @@ root.show_tree_2()
 root.add_lexemes(["int","y",";","y","=","5",";","x","=","y","+","y","*","5",";"])
 root.show_tree_2()
 lexeme_list = ["int","x",";","x","=","y","+","y","*","5"]
-
+"""
 
 
 

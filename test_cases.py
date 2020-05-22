@@ -1,5 +1,5 @@
 import pytest
-from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2
+from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2, get_val_virtual
 from semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
@@ -273,7 +273,7 @@ def test_semantic():
     root.add_lexemes(["int","y",";","y","=","5",";","int", "x", ";", "x","=","y","+","y","*","5",";"])
 
     #reduce_tree(root)
-    root.update_leaves()
+    
     root.eliminate_exp({'"addop"', '"mulop"','"relop"', '"assign"'})
     root.show_tree_2()
     #reduce_tree(root)
@@ -429,11 +429,18 @@ def test_full_input():
     # mind that additional "" is added
     root.simplify_it(['";"', '"{"','"}"', '"("', '")"','"if"','"else"','"while"'])
 
-    root.eliminate_exp({'"addop"', '"mulop"', '"assign"'})
+    root.update_leaves()
+    for i in root.leaves:
+        print_green(f"leaf update: {i.name}")
+
+    root.eliminate_exp({'"addop"', '"mulop"', '"relop"', '"assign"'})
     reduce_tree(root)
 
     symtab = SymTable()
     get_val_2(root,symtab)
+    root.show_tree_2()
+    
+    get_val_virtual(root,symtab)
     
     root.show_tree_2()
 
