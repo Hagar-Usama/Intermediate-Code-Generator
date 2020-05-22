@@ -28,7 +28,7 @@ Step Four: IC
 * [x] simplify tree
 * [x] add lexemes
 * [ ] make sure to delete nodes (free/del)
-* [ ] lift operands up
+* [x] lift operands up
 * [ ] build AST
 * [ ] IC
 * [ ] backpatching
@@ -41,3 +41,20 @@ Step Four: IC
 * [ ] get_val_2 & get_virtual shall be the combine.Yet, some functions not working then
 >  * try to add flag <br>
 >  * make it return list of virtual nodes to work with separately
+
+~ $ java -version
+openjdk version "1.8.0_232"
+OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~16.04.1-b09)
+OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+
+~ $ javac -version
+javac 1.8.0_232
+
+---
+
+## Run Jasmin
+
+1. put your code in text file.j
+2. run the command
+bash`` java -jar jasmin.jar file.j ``
+3. now a class file is generated, to run: `` java file ``
