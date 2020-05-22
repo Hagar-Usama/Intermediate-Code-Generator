@@ -56,12 +56,15 @@ class SymTable:
     def __init__(self):
         self.table = {}
         self.coolTable = {}
+        self.locals = {}
     
     def add_symbol(self, sym):
         #check if already exists (duplicate declaration)
         self.table[sym.lex] = sym
         self.coolTable[sym.lex] = [sym.type, sym.value]
         print_yellow(f"add symbol: {sym.lex}, val: {sym.value}")
+        self.locals[sym.lex] = len(self.locals)
+
 
     def lookup_table(self,key):
         if key in self.coolTable:
@@ -75,6 +78,12 @@ class SymTable:
         if x:
             x[1] = val
             self.coolTable[key] = x
+
+    def get_index(self, key):
+        if key in self.locals:
+            return self.locals[key]
+        else:
+            return 0
 
 
 
@@ -703,17 +712,15 @@ def get_val_virtual(n, symtab):
 def generate_code(n, symtab):
     print_yellow(f"name: {n.name}")
 
-
-    
     if n.isleaf:
         x = check_cat(n)
         if x == "num":
             
             if n.type == "int":
                 if n.value < 6:
-                    n.code = n.type[0] + "const_"
+                    n.code = n.type[0] + "const_" + str(n.value)
                 else:
-                    n.code = n.type[0] + "bipush        " + str(n.value)
+                    n.code = "bipush        " + str(n.value)
 
             elif n.type == "float":
                 n.code = "ldc        " + str(n.value) + "f" 
@@ -728,11 +735,25 @@ def generate_code(n, symtab):
                 # add to stack
                 pass
             elif n.parent.name == '"assign"':
-                n.code = n.type[0] + "store"
-                pass
+                index = symtab.get_index(n.lexeme)
+
+                if index > 6:
+                    n.code = n.type[0] + "store        " + str(index)
+                else:
+                    
+                    n.code = n.type[0] + "store_" + str(index)
+                
+                
             else:
-                #declaration or assignment
-                n.code = n.type[0] + "load_"
+                
+                index = symtab.get_index(n.lexeme)
+                if index < 6:
+                    n.code = n.type[0] + "load_" + str(index)
+                else:
+                    n.code = n.type[0] + "load        " + str(index)
+
+                if n.type == "int" and n.parent.type == "float":
+                    n.code += "\ti2f"
                 
     else:
 
@@ -740,33 +761,53 @@ def generate_code(n, symtab):
 
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
+
+
             
-            n.code = n.type[0] + 'mul'
+            r_code = n.children[0].code
+            l_code = "\t" + n.children[1].code
+            
+            n.code = r_code + l_code + "\t" +  n.type[0] + 'mul'
 
         elif n.lexeme == '/':
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
+
+            r_code = n.children[0].code
+            l_code = "\t" + n.children[1].code
+            n.code = r_code + l_code + "\t" +  n.type[0] + 'div'
             
-            n.code = n.type[0] + 'div'
+
             
         elif n.lexeme == '+':
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
-            
-            n.code = n.type[0] + 'add'
+
+            if n.children[0].lexeme == "1" and n.children[0].type == "int":
+                n.code = n.type[0] + 'inc'
+            elif n.children[1].lexeme == "1" and n.children[1].type == "int":
+                n.code = n.type[0] + 'inc'
+            else:
+                r_code = n.children[0].code
+                l_code = "\t" + n.children[1].code
+                n.code = r_code + l_code + "\t" +  n.type[0] + 'add'
+                
             
         elif n.lexeme == '-':
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
+
+            r_code = n.children[0].code
+            l_code = "\t" + n.children[1].code
+            n.code = r_code + l_code + "\t" +  n.type[0] + 'sub'
             
-            n.code = n.type[0] + 'sub'
             
 
         elif n.name == '"assign"':
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
             
-            n.code = n.children[1].code + n.children[0].code
+            n.code = n.children[1].code + '\t' +  n.children[0].code
             
         elif n.lexeme == '<':
             generate_code(n.children[0], symtab)
@@ -778,7 +819,11 @@ def generate_code(n, symtab):
             for i in n.children:
                 if i.name !="DECLARATION":
                     generate_code(i,symtab)
-                
+
+            """ 
+            for i in n.children:
+                n.code += " " + i.code
+            """    
 
 def print_node(n, option=0):
     block_list = ["METHOD_BODY", "WHILE", "IF","DECLARATION", "STATEMENT_LIST_2","STATEMENT_LIST"]
@@ -798,6 +843,9 @@ def print_node(n, option=0):
             print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}, code: {n.code}")
 
 
+def check_diff_types(n1, n2):
+    if n1.type != n2.type:
+        pass
 
 def check_cat(n):
     
