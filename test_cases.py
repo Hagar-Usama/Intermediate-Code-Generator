@@ -1,5 +1,6 @@
 import pytest
 from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2, get_val_virtual
+from node import generate_code
 from semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
@@ -441,10 +442,22 @@ def test_full_input():
     root.show_tree_2()
     
     get_val_virtual(root,symtab)
-    
     root.show_tree_2()
-
     print_yellow(symtab.coolTable)
+
+    actual_value = None
+    correct_value = None
+
+    assert_it(correct_value, actual_value, case)
+
+    case = 'test generating code [case 1]'
+    generate_code(root, symtab)
+    root.show_tree_2(1)
+
+    assert_it(correct_value, actual_value, case)
+
+    
+
 
 
 

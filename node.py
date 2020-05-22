@@ -97,6 +97,7 @@ class Node():
         self.lexeme = ''
         self.type = None
         self.value = ''
+        self.code = ""
 
     
     def __del__(self):
@@ -187,7 +188,7 @@ class Node():
                 print("---"*n.depth, end='-' )
                 print_yellow(f"Child Name: {n.name}, Id: {n.id}")
 
-    def show_tree_2(self):
+    def show_tree_2(self, option=0):
 
         nodes_list = [self]
         current_node = self
@@ -200,7 +201,7 @@ class Node():
             print(" "*(current_node.depth*2), end='--' )
 
             #print_dark_cyan(f"Node Name: {current_node.name}, Value: {current_node.value}, lex: {current_node.lexeme}, type:{current_node.type}")
-            print_node(current_node)
+            print_node(current_node,option)
             #print_dark_cyan(f"Node Name: {current_node.name}, {current_node}")
 
             #print_dark_cyan(f"Name: {current_node.name}, Id: {current_node.id}")
@@ -699,14 +700,102 @@ def get_val_virtual(n, symtab):
     print(symtab.coolTable)
 
 
-def print_node(n):
-    block_list = ["METHOD_BODY", "WHILE", "IF","DECLARATION", "STATEMENT_LIST_2","STATEMENT_LIST"]
-    if n.name in block_list:
-        print_yellow(f"Node Name: {n.name}")
-    elif n.name == '"relop"':
-        print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}")
+def generate_code(n, symtab):
+    print_yellow(f"name: {n.name}")
+
+
+    
+    if n.isleaf:
+        x = check_cat(n)
+        if x == "num":
+            
+            if n.type == "int":
+                if n.value < 6:
+                    n.code = n.type[0] + "const_"
+                else:
+                    n.code = n.type[0] + "bipush        " + str(n.value)
+
+            elif n.type == "float":
+                n.code = "ldc        " + str(n.value) + "f" 
+
+
+        elif x == "id":
+
+            print_green(n.lexeme)
+            y = n.parent
+            
+            if n.parent.name == "DECLARATION":
+                # add to stack
+                pass
+            elif n.parent.name == '"assign"':
+                n.code = n.type[0] + "store"
+                pass
+            else:
+                #declaration or assignment
+                n.code = n.type[0] + "load_"
+                
     else:
-         print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
+
+        if n.lexeme == '*':
+
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = n.type[0] + 'mul'
+
+        elif n.lexeme == '/':
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = n.type[0] + 'div'
+            
+        elif n.lexeme == '+':
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = n.type[0] + 'add'
+            
+        elif n.lexeme == '-':
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = n.type[0] + 'sub'
+            
+
+        elif n.name == '"assign"':
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = n.children[1].code + n.children[0].code
+            
+        elif n.lexeme == '<':
+            generate_code(n.children[0], symtab)
+            generate_code(n.children[1], symtab)
+            
+            n.code = 'ifge'
+            
+        else:
+            for i in n.children:
+                if i.name !="DECLARATION":
+                    generate_code(i,symtab)
+                
+
+def print_node(n, option=0):
+    block_list = ["METHOD_BODY", "WHILE", "IF","DECLARATION", "STATEMENT_LIST_2","STATEMENT_LIST"]
+    if not option:
+        if n.name in block_list:
+            print_yellow(f"Node Name: {n.name}")
+        elif n.name == '"relop"':
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}")
+        else:
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
+    else:
+        if n.name in block_list:
+            print_yellow(f"Node Name: {n.name}")
+        elif n.name == '"relop"':
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, code: {n.code} ")
+        else:
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}, code: {n.code}")
 
 
 
