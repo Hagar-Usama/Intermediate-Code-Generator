@@ -819,24 +819,32 @@ def generate_code(n, symtab):
 
             for i in n.children:
                 generate_code(i, symtab)
+
+            label_then = assign_unique_name()
+            label_else = assign_unique_name()
+            label_next = assign_unique_name()
             
-            n.code = n.children[0].code + "        " + "label then"
-            n.code += '\t' + "label else:" 
+            n.code = n.children[0].code + "        " + label_then
+            n.code += '\t' + label_else +  ':'
             n.code += '\t' + n.children[2].code
-            n.code += '\t' + "goto        " + "label next"
-            n.code += '\t' + "label then:" 
+            n.code += '\t' + "goto        " + label_next
+            n.code += '\t' + label_then +  ':' 
             n.code += '\t' + n.children[1].code
-            n.code += '\t' + "label next:"
+            n.code += '\t' + label_next + ':'
 
         elif n.name =="WHILE":
 
             for i in n.children:
                 generate_code(i, symtab)
 
-            n.code = "label_w:"  
-            n.code += '\t' + n.children[0].code + "        " + "label NEXT"
-            n.code += '\t' + "goto        " + "label_w"
-            n.code += '\t' + "label NEXT:" 
+            label_w = assign_unique_name()
+            label_next = assign_unique_name()
+
+
+            n.code = label_w + ':'
+            n.code += '\t' + n.children[0].code + "        " + label_next
+            n.code += '\t' + "goto        " + label_w
+            n.code += '\t' + label_next + ":" 
             n.code += '\t' + n.children[1].code
              
 
@@ -871,6 +879,10 @@ def print_node(n, option=0):
             print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}, code: {n.code}")
 
 
+def assign_unique_name():
+    assign_num = get_node_uuid()
+    return 'L_'+ assign_num[0] + assign_num[1]  + assign_num[2]
+    
 def check_diff_types(n1, n2):
     if n1.type != n2.type:
         pass
