@@ -492,7 +492,18 @@ def test_full_input():
     get_val_virtual(root,symtab)
     
     generate_code(root, symtab)
-    root.show_tree_2(1)
+    #root.show_tree_2(1)
+    code = root.code
+    code = root.get_code()
+
+    print_blue("code is")
+    print_yellow(code)
+
+    code_list = code.split('\n')
+    print_green(code_list)
+
+    root.backpatch()
+    print_purple(root.jasmin_in("coode"))
 
     assert_it(correct_value, actual_value, case)
 

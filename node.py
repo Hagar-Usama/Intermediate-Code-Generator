@@ -1,5 +1,6 @@
 import uuid
 from semantic import split_actions, modify_actions, post_modify_actions, post_modify_actions_2
+import re
 
 
 def get_node_uuid():
@@ -107,11 +108,92 @@ class Node():
         self.type = None
         self.value = ''
         self.code = ""
+        self.comp_code = ""
 
     
     def __del__(self):
         #print('Destructor called, vehicle deleted.')
         pass
+
+    def get_code(self):
+        #p = re.compile('\\n+')
+        #x = self.code.split("\n")
+        x =  re.sub(r'(\n)+', '\n', self.code)
+        x = re.sub(r'(\n    \n)+', '\n',x)
+        x = x.strip("\n")
+        
+        return x
+
+        
+    def backpatch(self):
+        '''
+        gather all labels
+        if there is a consecutive labels:
+            store them
+            replace them with the first one in the list
+            delete the duplicates
+
+        '''
+
+        code_list = self.get_code()
+        code_list = code_list.split("\n")
+        labels = []
+        dups = []
+
+
+        for i, value in enumerate(code_list):
+            if value.endswith(":"):
+                labels.append((i, value))
+
+        
+        temp = labels[0][0]
+        for i, value in enumerate(labels):
+            
+            if value[0] == temp + 1:
+                print("dup", value)
+                dups.append((labels[i][1], labels[i-1][1]))
+            temp = value[0]
+        
+        print("dups",dups)
+        
+        for i in dups:
+            # replace labels
+            #self.code = self.code.replace(i[0],i[1])
+            self.code = self.code.replace(i[0][:],"not needed")
+            self.code = self.code.replace("not needed","")
+            self.code = self.code.replace(i[0][:-1],i[1][:-1])
+            # remove redundant
+            
+
+        print(self.get_code())
+
+        #print("print labels")
+        #print(labels)
+
+        return labels
+       
+    def jasmin_in(self, name):
+        part1 = ".class public " + "name\n"
+        part1 += """.super java/lang/Object 
+.method public <init>()V 
+    aload_0 
+    invokespecial java/lang/Object/<init>()V 
+    return 
+.end method 
+.method public static main([Ljava/lang/String;)V
+    .limit stack 10 
+    .limit locals 100\n"""
+
+        part2 = self.get_code()
+        part3 = """\n     return
+.end method"""
+        
+        full_code = part1 + part2 + part3
+
+        return full_code
+
+        #write it into file
+
 
     def build_tree(self, action_list):
         '''
@@ -461,12 +543,6 @@ class Node():
 
     
 
-
-
-
-
-
-
 def reduce_tree(n):
 
         
@@ -718,12 +794,12 @@ def generate_code(n, symtab):
             
             if n.type == "int":
                 if n.value < 6:
-                    n.code = n.type[0] + "const_" + str(n.value)
+                    n.code = "\n    " + n.type[0] + "const_" + str(n.value)
                 else:
-                    n.code = "bipush " + str(n.value)
+                    n.code = "\n    " + "bipush " + str(n.value)
 
             elif n.type == "float":
-                n.code = "ldc " + str(n.value) + "f" 
+                n.code = "\n    "  + "ldc " + str(n.value) + "f" 
 
 
         elif x == "id":
@@ -738,22 +814,22 @@ def generate_code(n, symtab):
                 index = symtab.get_index(n.lexeme)
 
                 if index > 6:
-                    n.code = n.type[0] + "store " + str(index)
+                    n.code = "\n    " + n.type[0] + "store " + str(index)
                 else:
                     
-                    n.code = n.type[0] + "store_" + str(index)
+                    n.code = "\n    " + n.type[0] + "store_" + str(index)
                 
                 
             else:
                 
                 index = symtab.get_index(n.lexeme)
                 if index < 6:
-                    n.code = n.type[0] + "load_" + str(index)
+                    n.code = "\n    " +  n.type[0] + "load_" + str(index)
                 else:
-                    n.code = n.type[0] + "load " + str(index)
+                    n.code = "\n    " + n.type[0] + "load " + str(index)
 
                 if n.type == "int" and n.parent.type == "float":
-                    n.code += "\ni2f"
+                    n.code += "\n    i2f"
                 
     else:
 
@@ -765,17 +841,17 @@ def generate_code(n, symtab):
 
             
             r_code = n.children[0].code
-            l_code = "\n" + n.children[1].code
+            l_code = "\n    " + n.children[1].code
             
-            n.code = r_code + l_code + "\n" +  n.type[0] + 'mul'
+            n.code = r_code + l_code + "\n    " +  n.type[0] + 'mul'
 
         elif n.lexeme == '/':
             generate_code(n.children[0], symtab)
             generate_code(n.children[1], symtab)
 
             r_code = n.children[0].code
-            l_code = "\n" + n.children[1].code
-            n.code = r_code + l_code + "\n" +  n.type[0] + 'div'
+            l_code = "\n    " + n.children[1].code
+            n.code = r_code + l_code + "\n    " +  n.type[0] + 'div'
             
 
             
@@ -789,8 +865,8 @@ def generate_code(n, symtab):
                 n.code = n.type[0] + "inc" + " " + str(symtab.get_index(n.children[0].lexeme)) + ",1"
             else:
                 r_code = n.children[0].code
-                l_code = "\n" + n.children[1].code
-                n.code = r_code + l_code + "\n" +  n.type[0] + 'add'
+                l_code = "\n    " + n.children[1].code
+                n.code = r_code + l_code + "\n    " +  n.type[0] + 'add'
                 
             
         elif n.lexeme == '-':
@@ -798,8 +874,8 @@ def generate_code(n, symtab):
             generate_code(n.children[1], symtab)
 
             r_code = n.children[0].code
-            l_code = "\n" + n.children[1].code
-            n.code = r_code + l_code + "\n" +  n.type[0] + 'sub'
+            l_code = "\n    " + n.children[1].code
+            n.code = r_code + l_code + "\n    " +  n.type[0] + 'sub'
             
             
 
@@ -808,7 +884,7 @@ def generate_code(n, symtab):
             generate_code(n.children[1], symtab)
             
             # load store
-            n.code = n.children[1].code + '\n' +  n.children[0].code
+            n.code = n.children[1].code + '\n    ' +  n.children[0].code
 
         elif n.name == '"relop"':
 
@@ -820,44 +896,44 @@ def generate_code(n, symtab):
             if n.lexeme == '<':
                 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmpge'
+                    n.code += '\n    ' +  'if_icmpge'
                 elif n.children[0].type == "float":
-                    n.code += '\n' + "fcmpg" + "\n" + "ifge"
+                    n.code += '\n    ' + "fcmpg" + "\n    " + "ifge"
 
             elif n.lexeme == '>':
                 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmple'
+                    n.code += '\n    ' +  'if_icmple'
                 elif n.children[0].type == "float":
-                    n.code += '\n' +  "fcmpl" + "\n" + "ifle"
+                    n.code += '\n    ' +  "fcmpl" + "\n    " + "ifle"
             
             elif n.lexeme == '>=':
                 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmplt'
+                    n.code += '\n    ' +  'if_icmplt'
                 elif n.children[0].type == "float":
-                    n.code += '\n' +  "fcmpl" + "\n" + "iflt"
+                    n.code += '\n    ' +  "fcmpl" + "\n    " + "iflt"
             
             elif n.lexeme == '<=':
                 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmpgt'
+                    n.code += '\n    ' +  'if_icmpgt'
                 elif n.children[0].type == "float":
-                    n.code += '\n' +  "fcmpg" + "\n" + "ifgt"
+                    n.code += '\n    ' +  "fcmpg" + "\n    " + "ifgt"
             
             elif n.lexeme == '==':
                 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmpne'
+                    n.code += '\n    ' +  'if_icmpne'
                 elif n.children[0].type == "float":
-                    n.code += '\n' + "fcmpl" + "\n" + "ifne"
+                    n.code += '\n    ' + "fcmpl" + "\n    " + "ifne"
 
             elif n.lexeme == '!=':
 
                 if n.children[0].type == "int":
-                    n.code += '\n' +  'if_icmpeq'
+                    n.code += '\n    ' +  'if_icmpeq'
                 elif n.children[0].type == "float":
-                    n.code += '\n' +  "fcmpl" + "\n" + "ifeq"
+                    n.code += '\n    ' +  "fcmpl" + "\n    " + "ifeq"
 
         elif n.name =="IF":
 
@@ -869,13 +945,13 @@ def generate_code(n, symtab):
             
             n.code = n.children[0].code + " " + label_else
             # then.code            
-            n.code += '\n' + n.children[1].code
+            n.code += '\n    ' + n.children[1].code
             # goto Next
-            n.code += '\n' + "goto " + label_next
+            n.code += '\n    ' + "goto " + label_next
             # else label
-            n.code += '\n' + label_else +  ':' 
+            n.code += '\n    ' + label_else +  ':' 
             # else.code
-            n.code += '\n' + n.children[2].code
+            n.code += '\n    ' + n.children[2].code
             # Next label
             n.code += '\n' + label_next + ':'
 
@@ -890,11 +966,11 @@ def generate_code(n, symtab):
 
             n.code = label_w + ':'
             # !exp.code
-            n.code += '\n' + n.children[0].code + " " + label_next
+            n.code += '\n    ' + n.children[0].code + " " + label_next
             # condition.code
-            n.code += '\n' + n.children[1].code
+            n.code += '\n    ' + n.children[1].code
             # goto while again
-            n.code += '\n' + "goto " + label_w
+            n.code += '\n    ' + "goto " + label_w
             # Next label
             n.code += '\n' + label_next + ':'
             
@@ -905,10 +981,12 @@ def generate_code(n, symtab):
                 if i.name !="DECLARATION":
                     generate_code(i,symtab)
 
-            """ 
+            
+
+            
             for i in n.children:
-                n.code += " " + i.code
-            """    
+                n.code += "\n" + i.code
+               
 
 def print_node(n, option=0):
     block_list = ["METHOD_BODY", "WHILE", "IF","DECLARATION", "STATEMENT_LIST_2","STATEMENT_LIST"]
@@ -920,12 +998,14 @@ def print_node(n, option=0):
         else:
             print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
     else:
-        if n.name in block_list:
-            print_yellow(f"Node Name: {n.name}, code: {n.code}")
+        if n.name == "METHOD_BODY":
+             print_yellow(f"Node Name: {n.name}, code: {n.code}")
+        elif n.name in block_list:
+            print_yellow(f"Node Name: {n.name}")
         elif n.name == '"relop"':
-            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, code: {n.code} ")
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme} ")
         else:
-            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}, code: {n.code}")
+            print_dark_cyan(f"Node Name: {n.name}, Value: {n.value}, lex: {n.lexeme}, type:{n.type}")
 
 
 def assign_unique_name():

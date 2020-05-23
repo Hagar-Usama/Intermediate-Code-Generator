@@ -1,4 +1,4 @@
-.class public ic2
+.class public code
 .super java/lang/Object 
 .method public <init>()V 
     aload_0 
@@ -12,7 +12,6 @@
     istore_1
     iconst_4
     istore_2
-
     iconst_5
     istore_3
     iload_1
@@ -23,26 +22,22 @@
     istore_3
     iload_3
     bipush 11
-    if_icmpne L_7ba
+    if_icmpne L_96e
     iconst_2
     istore_1
-    goto L_77a
-L_7ba:
+    goto L_b37
+    L_96e:
     bipush 7
     istore_2
-L_77a:
-L_7f2:
+L_b37:
     iload_2
     bipush 10
-    if_icmpge L_4af
+    if_icmpge L_2ec
     iload_2
     iconst_2
     iadd
     istore_2
-    goto L_7f2
-L_4af:
-    getstatic java/lang/System/out Ljava/io/PrintStream; 
-    iload_2
-    invokevirtual java/io/PrintStream/println(I)V   ; print x
-    return
+    goto L_b37
+L_2ec:     
+return
 .end method

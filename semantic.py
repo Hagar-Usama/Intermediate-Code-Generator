@@ -1,5 +1,10 @@
 from parser_genrator import show_parser_table
+import os
 
+
+def get_current_directory(): 
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    return current_path
 
 def modify_actions(actions):
     '''
@@ -102,10 +107,57 @@ def main():
     act = post_modify_actions(act)
     post_modify_actions_2(act)
 
+    generated_code = """.class public name
+.super java/lang/Object 
+.method public <init>()V 
+    aload_0 
+    invokespecial java/lang/Object/<init>()V 
+    return 
+.end method 
+.method public static main([Ljava/lang/String;)V
+    .limit stack 10 
+    .limit locals 100 
+        iconst_3
+    istore_1
+    iconst_4
+    istore_2
+    iconst_5
+    istore_3
+    iload_1
+    iload_2
+    iconst_2
+    imul
+    iadd
+    istore_3
+    iload_3
+    bipush 11
+    if_icmpne L_96e
+    iconst_2
+    istore_1
+    goto L_b37
+    L_96e:
+    bipush 7
+    istore_2
+L_b37:
+    iload_2
+    bipush 10
+    if_icmpge L_2ec
+    iload_2
+    iconst_2
+    iadd
+    istore_2
+    goto L_b37
+L_2ec:     return
+.end method"""
 
-   
+    # jasmin file
+    jf = get_current_directory()
+    output_file = 'code.j'
+    input_path = jf + '/' +  output_file
 
-    pass
+    with open(input_path, 'w+') as f:
+    
+        f.write(generated_code)
 
 if __name__ == '__main__':
     main()

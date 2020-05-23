@@ -30,9 +30,10 @@ Step Four: IC
 * [ ] make sure to delete nodes (free/del)
 * [x] lift operands up
 * [x] build AST
-* [ ] swap relop with 2 conditions (>=) --> !(<)
-* [ ] IC
-* [ ] backpatching
+* [x] swap relop with 2 conditions (>=) --> !(<)
+* [x] IC
+* [x] backpatching
+* [x] remove duplicate labels (at most 2)
 * [ ] report
 
 ## Bugs:
