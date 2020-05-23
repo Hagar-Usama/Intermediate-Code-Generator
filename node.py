@@ -826,7 +826,21 @@ def generate_code(n, symtab):
             n.code += '\t' + "goto        " + "label next"
             n.code += '\t' + "label then:" 
             n.code += '\t' + n.children[1].code
-            n.code += '\t' + "label next:" 
+            n.code += '\t' + "label next:"
+
+        elif n.name =="WHILE":
+
+            for i in n.children:
+                generate_code(i, symtab)
+
+            n.code = "label_w:"  
+            n.code += '\t' + n.children[0].code + "        " + "label NEXT"
+            n.code += '\t' + "goto        " + "label_w"
+            n.code += '\t' + "label NEXT:" 
+            n.code += '\t' + n.children[1].code
+             
+
+
 
             
         else:
