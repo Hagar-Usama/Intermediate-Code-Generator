@@ -29,7 +29,8 @@ Step Four: IC
 * [x] add lexemes
 * [ ] make sure to delete nodes (free/del)
 * [x] lift operands up
-* [ ] build AST
+* [x] build AST
+* [ ] swap relop with 2 conditions (>=) --> !(<)
 * [ ] IC
 * [ ] backpatching
 * [ ] report
@@ -38,7 +39,7 @@ Step Four: IC
 * [ ] check_type not working properly in some cases
 > added a couple of lines to fixed temporarily
 
-* [ ] get_val_2 & get_virtual shall be the combine.Yet, some functions not working then
+* [ ] get_val_2 & get_virtual shall be combined. Yet, some functions not working then
 >  * try to add flag <br>
 >  * make it return list of virtual nodes to work with separately
 

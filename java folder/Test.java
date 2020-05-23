@@ -2,21 +2,29 @@
 public class Test{
     public static void main(String[] args){
        
-        int x = 7;
-        float y = (float) (3.5);
-        int z = 3;
-
-        y = z + x*(float)(2.5);
+        float x = (float)(7);
+        int y = 5;
         
-
-        if (x>5){
-            x = 3;
+        if (x < 5){
+            y = 5;
 
         }else{
 
-            x=2;
+            y=7;
         }
-        System.out.print(x);
+ 
+        /* if(x ==3){x = x+1;}else{x+=3;}
+        if(x !=3){}
+        if(x <3){}
+        if(x >3){}
+        if(x >=3){}
+        if(x <=3){}
+        */
+
+        if(y != 3){
+            System.out.print(x);
+
+        }
 
     }
  
