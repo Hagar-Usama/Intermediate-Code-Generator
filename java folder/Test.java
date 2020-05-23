@@ -2,23 +2,26 @@
 public class Test{
     public static void main(String[] args){
 
+        int x;
+        x = 3;
         int y;
-        y=5;
+        y=4;
+        int z;
+        z=5;
 
-        float x;
-        x = y + (float)(y)*(float)(2.5);
+
+        z = x + y*2;
         
-        if(x<3){
-            y=7;
-
+        if(z == 11){
+            x = 2;
         }else{
+            y = 7;
 
-            y = 5;
         }
+        
+        while(y < 10){
 
-        while(y < 5){
-
-            y = y+1;
+            y = y+2;
 
         }
 

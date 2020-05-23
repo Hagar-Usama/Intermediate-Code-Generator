@@ -890,12 +890,14 @@ def generate_code(n, symtab):
 
             n.code = label_w + ':'
             # !exp.code
-            n.code += '\n' + n.children[0].code + " " + label_w
+            n.code += '\n' + n.children[0].code + " " + label_next
             # condition.code
             n.code += '\n' + n.children[1].code
-             
-
-
+            # goto while again
+            n.code += '\n' + "goto " + label_w
+            # Next label
+            n.code += '\n' + label_next + ':'
+            
 
             
         else:
