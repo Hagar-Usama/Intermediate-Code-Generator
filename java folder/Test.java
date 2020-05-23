@@ -1,31 +1,30 @@
 
 public class Test{
     public static void main(String[] args){
-       
-        float x = (float)(7);
-        int y = 5;
+
+        int y;
+        y=5;
+
+        float x;
+        x = y + (float)(y)*(float)(2.5);
         
-        if (x < 5){
-            y = 5;
+        if(x<3){
+            y=7;
 
         }else{
 
-            y=7;
+            y = 5;
         }
- 
-        /* if(x ==3){x = x+1;}else{x+=3;}
-        if(x !=3){}
-        if(x <3){}
-        if(x >3){}
-        if(x >=3){}
-        if(x <=3){}
-        */
 
-        if(y != 3){
-            System.out.print(x);
+        while(y < 5){
+
+            y = y+1;
 
         }
 
+
+       
+        
     }
  
   

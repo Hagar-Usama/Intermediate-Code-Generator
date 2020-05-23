@@ -6,7 +6,7 @@
     return 
 .end method 
 .method public static main([Ljava/lang/String;)V 
-    .limit stack 5 
+    .limit stack 10 
     .limit locals 100 
     iconst_5
     istore_1
@@ -19,7 +19,7 @@
     fadd
     fstore_2
     fload_2
-    iconst_3
+    ldc 3.0f  ; instead of iconst_3
     fcmpg
     ifge L_899
     bipush 7
