@@ -22,22 +22,22 @@
     istore_3
     iload_3
     bipush 11
-    if_icmpne L_50e
+    if_icmpne L_c3a
     iconst_2
     istore_1
-    goto L_ab9
-    L_50e:
+    goto L_b04
+    L_c3a:
     bipush 7
     istore_2
-L_ab9:
+L_b04:
     iload_2
     bipush 10
-    if_icmpge L_0e7
+    if_icmpge L_784
     iload_2
     iconst_2
     iadd
     istore_2
-    goto L_ab9
-L_0e7:
+    goto L_b04
+L_784:
      return
 .end method
