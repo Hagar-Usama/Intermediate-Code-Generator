@@ -49,7 +49,7 @@ def print_green(msg):
 def get_current_directory(): 
     current_path = os.path.dirname(os.path.abspath(__file__))
     return current_path
-    print("Script path is : " + scriptpath)
+    #print("Script path is : " + scriptpath)
 
 def read_file(filepath):
     # Open a file: file

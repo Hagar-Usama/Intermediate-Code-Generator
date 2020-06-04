@@ -107,6 +107,11 @@ def main():
     act = post_modify_actions(act)
     post_modify_actions_2(act)
 
+
+    # here gather all or import this to another file
+    # code as in test cases
+    # comment/remove redundant prints
+
     generated_code = """.class public name
 .super java/lang/Object 
 .method public <init>()V 
