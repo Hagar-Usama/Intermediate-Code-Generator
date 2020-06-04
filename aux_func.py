@@ -11,6 +11,11 @@ def read_file_list(file_path):
 
     return lines
 
+def write_in_file(input_path, str_input):
+
+    with open(input_path, 'w+') as f:
+        f.write(str_input)
+
 
 def main():
     cd = get_current_directory()

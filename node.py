@@ -173,7 +173,8 @@ class Node():
         return labels
        
     def jasmin_in(self, name):
-        part1 = ".class public " + "name\n"
+
+        part1 = ".class public " + f"{name}\n"
         part1 += """.super java/lang/Object 
 .method public <init>()V 
     aload_0 
