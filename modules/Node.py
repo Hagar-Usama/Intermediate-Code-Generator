@@ -70,36 +70,37 @@ class Node():
             if value.endswith(":"):
                 labels.append((i, value))
 
-        
-        temp = labels[0][0]
-        for i, value in enumerate(labels):
+        if labels:
+                
+            temp = labels[0][0]
+            for i, value in enumerate(labels):
+                
+                if value[0] == temp + 1:
+                    #print("dup", value)
+                    #dups.append((labels[i][1][:-1], labels[i-1][1][:-1]))
+                    dups.append((labels[i][1], labels[i-1][1]))
+
+                temp = value[0]
             
-            if value[0] == temp + 1:
-                #print("dup", value)
-                #dups.append((labels[i][1][:-1], labels[i-1][1][:-1]))
-                dups.append((labels[i][1], labels[i-1][1]))
+            #print("dups",dups)
 
-            temp = value[0]
-        
-        #print("dups",dups)
-
-        
-
-        #print_yellow(self.get_code())
-        #print_blue(dups)
-        
-        for i in dups:
-            # replace labels
-            self.code = self.code.replace(i[0][:],"not needed")
-            self.code = self.code.replace("not needed","")
-            self.code = self.code.replace(i[0][:-1],i[1][:-1])
-            # remove redundant
             
 
-        #print(self.get_code())
+            #print_yellow(self.get_code())
+            #print_blue(dups)
+            
+            for i in dups:
+                # replace labels
+                self.code = self.code.replace(i[0][:],"not needed")
+                self.code = self.code.replace("not needed","")
+                self.code = self.code.replace(i[0][:-1],i[1][:-1])
+                # remove redundant
+                
 
-        #print("print labels")
-        #print(labels)
+            #print(self.get_code())
+
+            #print("print labels")
+            #print(labels)
 
         return labels
        

@@ -41,6 +41,7 @@
 * [x] remove duplicate labels (at most 2)
 * [x] remove print logs
 * [ ] consider module file to add your modules in
+* [x] optimize backpatching
 
 * [ ] report
 
@@ -54,15 +55,21 @@
 >  * try to add flag <br>
 >  * make it return list of virtual nodes to work with separately
 
+* [ ] do not declare multiple (seems to get something wrong <check logic>)
 ~ $ java -version
 openjdk version "1.8.0_232"
 OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~16.04.1-b09)
 OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
 
+* [ ] backpatching not working when no labels
+
 ~ $ javac -version
 javac 1.8.0_232
 
 ---
+
+## Notes
+* what if num is neg (is that handled)
 
 ## Run Jasmin
 
