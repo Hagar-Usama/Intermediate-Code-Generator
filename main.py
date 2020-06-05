@@ -1,4 +1,5 @@
-from modules.color_print import print_blue, print_green, print_purple, print_red, print_yellow, ANSI_RED, ANSI_RESET
+from modules.color_print import print_blue, print_green, print_purple, print_red, print_dark_cyan
+from modules.color_print import  print_yellow, ANSI_RED, ANSI_RESET
 from modules.semantic import modify_actions, post_modify_actions, post_modify_actions_2
 from modules.Symbol import SymTable, Symbol
 from modules.Node import Node, reduce_tree, get_str_val, get_val_2, get_val_virtual
@@ -72,13 +73,19 @@ def main():
 
     code_list = code.split('\n')
     #print_green(code_list)
-    for i in code_list:
-        print_green(i)
+    #for i in code_list:
+    #    print_green(i)
 
     root.backpatch()
     #print_purple(root.jasmin_in("coode"))
+    
+
+    code_list = root.get_code()
+    print_green(code_list)
+
     print_yellow(symtab.coolTable)
 
+    # output j file for jasmin
     code_path = cd + '/' + 'code.j'
     write_in_file(code_path, root.jasmin_in("code"))
 

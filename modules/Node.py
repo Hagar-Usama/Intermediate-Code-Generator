@@ -76,14 +76,20 @@ class Node():
             
             if value[0] == temp + 1:
                 #print("dup", value)
+                #dups.append((labels[i][1][:-1], labels[i-1][1][:-1]))
                 dups.append((labels[i][1], labels[i-1][1]))
+
             temp = value[0]
         
         #print("dups",dups)
+
+        
+
+        #print_yellow(self.get_code())
+        #print_blue(dups)
         
         for i in dups:
             # replace labels
-            #self.code = self.code.replace(i[0],i[1])
             self.code = self.code.replace(i[0][:],"not needed")
             self.code = self.code.replace("not needed","")
             self.code = self.code.replace(i[0][:-1],i[1][:-1])
@@ -879,7 +885,7 @@ def generate_code(n, symtab):
             # goto Next
             n.code += '\n    ' + "goto " + label_next
             # else label
-            n.code += '\n    ' + label_else +  ':' 
+            n.code += '\n' + label_else +  ':' 
             # else.code
             n.code += '\n    ' + n.children[2].code
             # Next label
