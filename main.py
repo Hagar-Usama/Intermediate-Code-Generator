@@ -1,8 +1,10 @@
-from color_print import print_blue, print_green, print_purple, print_red, print_yellow, ANSI_RED, ANSI_RESET
-from semantic import modify_actions, post_modify_actions, post_modify_actions_2
-from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2, get_val_virtual
-from node import generate_code
-from aux_func import get_current_directory, read_file_list, write_in_file
+from modules.color_print import print_blue, print_green, print_purple, print_red, print_yellow, ANSI_RED, ANSI_RESET
+from modules.semantic import modify_actions, post_modify_actions, post_modify_actions_2
+from modules.Symbol import SymTable, Symbol
+from modules.Node import Node, reduce_tree, get_str_val, get_val_2, get_val_virtual
+from modules.Node import generate_code
+from modules.aux_func import get_current_directory, read_file_list, write_in_file
+
 
 
 def main():
@@ -75,6 +77,7 @@ def main():
 
     root.backpatch()
     #print_purple(root.jasmin_in("coode"))
+    print_yellow(symtab.coolTable)
 
     code_path = cd + '/' + 'code.j'
     write_in_file(code_path, root.jasmin_in("code"))

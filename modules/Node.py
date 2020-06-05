@@ -1,95 +1,20 @@
 import uuid
-from semantic import split_actions, modify_actions, post_modify_actions, post_modify_actions_2
+from modules.semantic import split_actions, modify_actions, post_modify_actions, post_modify_actions_2
 import re
-
+from modules.color_print import print_yellow, print_blue, print_dark_cyan, print_green, print_purple, print_red
+from modules.Symbol import Symbol, SymTable
 
 def get_node_uuid():
     _NODE_UUID = str(uuid.uuid4())[:8]
 
     return _NODE_UUID
 
-ANSI_RESET = "\u001B[0m"
-ANSI_RED = "\u001B[31m"
-ANSI_GREEN = "\u001B[32m"
-ANSI_YELLOW = "\u001B[33m"
-ANSI_BLUE = "\u001B[34m"
-ANSI_PURPLE = "\u001B[35m"
-ANSI_ORANGE_BG = "\033[48;2;255;165;0m"
-ANSI_DARK_CYAN = "\033[96m"
-
-# it shall be 65 
+ 
 unique_id = 129300
 G_identifiers = {}
 grammar_dict = {}
 grammar_dict_sym = {}
 start_symbol = ''
-
-
-def print_dark_cyan(msg):
-    print(f"{ANSI_DARK_CYAN}{msg}{ANSI_RESET}")
-
-
-def print_yellow(msg):
-    print(f"{ANSI_YELLOW}{msg}{ANSI_RESET}")
-
-def print_purple(msg):
-    print(f"{ANSI_PURPLE}{msg}{ANSI_RESET}")
-
-def print_blue(msg):
-    print(f"{ANSI_BLUE}{msg}{ANSI_RESET}")
-
-
-def print_red(msg):
-    print(f"{ANSI_RED}{msg}{ANSI_RESET}")
-
-
-def print_green(msg):
-    print(f"{ANSI_GREEN}{msg}{ANSI_RESET}")
-
-class Symbol:
-    def __init__(self, lex, stype, value=None):
-        self.lex = lex
-        self.type = stype
-        self.value = value
-
-
-class SymTable:
-    def __init__(self):
-        self.table = {}
-        self.coolTable = {}
-        self.locals = {}
-    
-    def add_symbol(self, sym):
-        #check if already exists (duplicate declaration)
-        self.table[sym.lex] = sym
-        self.coolTable[sym.lex] = [sym.type, sym.value]
-        #print_yellow(f"add symbol: {sym.lex}, val: {sym.value}")
-        self.locals[sym.lex] = len(self.locals)
-
-
-    def lookup_table(self,key):
-        if key in self.coolTable:
-            return self.coolTable[key]
-        else:
-            return False
-
-    def update_symbol_val(self,key,val):
-
-        x = self.lookup_table(key)
-        if x:
-            x[1] = val
-            self.coolTable[key] = x
-
-    def get_index(self, key):
-        if key in self.locals:
-            return self.locals[key]
-        else:
-            return 0
-
-
-
-        
-
 
 
 class Node():

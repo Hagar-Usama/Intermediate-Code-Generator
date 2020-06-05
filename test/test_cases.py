@@ -1,7 +1,8 @@
 import pytest
-from node import Node, SymTable, Symbol, reduce_tree, get_str_val, get_val_2, get_val_virtual
-from node import generate_code
-from semantic import modify_actions, post_modify_actions, post_modify_actions_2
+from .modules.Symbol import SymTable, Symbol
+from .modules.Node import Node, reduce_tree, get_str_val, get_val_2, get_val_virtual
+from .modules.Node import generate_code
+from .modules.semantic import modify_actions, post_modify_actions, post_modify_actions_2
 
 ANSI_RESET = "\u001B[0m"
 ANSI_RED = "\u001B[31m"
@@ -549,4 +550,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
