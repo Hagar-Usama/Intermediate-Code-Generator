@@ -22,8 +22,12 @@ def main():
     act = post_modify_actions(act)
     act = post_modify_actions_2(act)
 
+    
+    ## make sure the actions list is not empty
+    root_name = act[0][0][0]
+
     ## assign the root node
-    root = Node("METHOD_BODY", None)
+    root = Node(root_name, None)
     root.build_tree(act)
 
 
