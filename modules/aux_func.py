@@ -18,6 +18,7 @@ def read_file_list(file_path):
 
 def write_in_file(output_path, str_input):
 
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w+') as f:
         f.write(str_input)
 

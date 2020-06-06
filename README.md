@@ -43,7 +43,7 @@
 * [x] consider module file to add your modules in
 * [x] optimize backpatching
 * [x] add arguments (argparse)
-* [ ] consider add directory for input and directory for output
+* [x] consider add directory for input and directory for output
 
 * [ ] report
 
