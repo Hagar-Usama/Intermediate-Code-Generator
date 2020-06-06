@@ -40,8 +40,9 @@
 * [x] backpatching
 * [x] remove duplicate labels (at most 2)
 * [x] remove print logs
-* [ ] consider module file to add your modules in
+* [x] consider module file to add your modules in
 * [x] optimize backpatching
+* [ ] add arguments (argparse)
 
 * [ ] report
 
@@ -70,6 +71,8 @@ javac 1.8.0_232
 
 ## Notes
 * what if num is neg (is that handled)
+* handle range to be general
+
 
 ## Run Jasmin
 
