@@ -42,7 +42,8 @@
 * [x] remove print logs
 * [x] consider module file to add your modules in
 * [x] optimize backpatching
-* [ ] add arguments (argparse)
+* [x] add arguments (argparse)
+* [ ] consider add directory for input and directory for output
 
 * [ ] report
 
