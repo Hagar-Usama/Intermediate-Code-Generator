@@ -6,7 +6,7 @@
 
 
 
-Voila, we have reached the last phase 🪄 ✨. ICG is the third phase of my compiler (Genepiler). It's planned to join my _'Oh My Compiler'_ project!
+Voila, we have reached the last phase ✨. ICG is the third phase of my compiler (Genepiler). It's planned to join my _'Oh My Compiler'_ project!
 
 > The name of this phase is a little bit misleading. The phase compacted the last three phases of a typical compiler (Intermediate Code Generator - Code Optimizer - Target Code Generation).
 
