@@ -14,7 +14,17 @@ This phase takes the _lexemes_ from the [first phase](https://github.com/Hagar-U
 
 ---
 
-### Easy Steps: 
+## Table of Contents:
+* [Easy Steps](#easy-steps)
+* [Tasks](#tasks)
+  * [New Tasks](#new-tasks)
+* [Bugs](#bugs-)
+* [Notes](#notes)
+
+---
+
+
+## Easy Steps: 
 * [x] Step one : Token
 * [x] Step two : Parse tree
 * [x] Step three: AST
@@ -23,7 +33,7 @@ This phase takes the _lexemes_ from the [first phase](https://github.com/Hagar-U
 ---
 
 
-### Tasks
+## Tasks
 * [x] build parsing tree
 * [x] show tree
 * [x] simplify tree
@@ -71,14 +81,15 @@ This phase takes the _lexemes_ from the [first phase](https://github.com/Hagar-U
 * what if num is neg (is that handled?)
 * handle range to be general (check phase 1)
 
----
-
-## Running Jasmin
+### Running Jasmin
 
 1. put your code in .j file
 2. run the folowing command
 bash `` java -jar jasmin.jar file.j ``
 3. now a class file is generated, to run: `` java file ``
+
+---
+
 
 ## [Memory] Plan (schedule)
 * Today: 14 May
@@ -90,6 +101,6 @@ bash `` java -jar jasmin.jar file.j ``
 
 
 ### Schedule:
-* 14 May Getting to know what's going on
-* 15 - 20 May : Build the program >>
+* 14 May 2020 Getting to know what's going on
+* 15 - 20 May 2020 : Build the program
 
