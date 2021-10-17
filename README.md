@@ -1,33 +1,39 @@
-# parser-generator
+# Intermediate Code Generator
+
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
+
+
+
+Voila, we have reached the last phase ✨. ICG is the third phase of my compiler (Genepiler). It's planned to join my _'Oh My Compiler'_ project!
+
+> The name of this phase is a little bit misleading. The phase compacted the last three phases of a typical compiler (Intermediate Code Generator - Code Optimizer - Target Code Generation).
+
+This phase takes the _lexemes_ from the [first phase](https://github.com/Hagar-Usama/Lexical) along with the _actions_ from the [second phase](https://github.com/Hagar-Usama/parser-generator) and produces _java code_ 🙌
 
 ---
 
-## Plan (schedule)
-* Today: 14 May
-* Actual Deadline: ~~30 May~~ 6 Jun
-* Phase Deadline: 20 May
-
-> 3 days to just implement this<br>
-> 1 day for the report
-
-
-### Schedule:
-* 14 May Getting to know what's going on
-* 15 - 20 May : Build the program >>
-
-
----
-
-### Requirements: 🙆
-* Step one : Token
-* Step two : Parse tree
-* Step three: AST
-* Step Four: IC
+## Table of Contents:
+* [Easy Steps](#easy-steps)
+* [Tasks](#tasks)
+  * [New Tasks](#new-tasks)
+* [Bugs](#bugs-)
+* [Notes](#notes)
 
 ---
 
 
-### Tasks
+## Easy Steps: 
+* [x] Step one : Token
+* [x] Step two : Parse tree
+* [x] Step three: AST
+* [x] Step Four: IC
+
+---
+
+
+## Tasks
 * [x] build parsing tree
 * [x] show tree
 * [x] simplify tree
@@ -45,39 +51,56 @@
 * [x] add arguments (argparse)
 * [x] consider add directory for input and directory for output
 
-* [ ] report
+* [x] report
+
+### New Tasks:
+* [ ] fix bugs
+* [ ] consider generalizing the last phase
 
 ---
 
-## Bugs:
-* [ ] check_type not working properly in some cases
-> added a couple of lines to fixed temporarily
+## Bugs 🐞:
 
-* [ ] get_val_2 & get_virtual shall be combined. Yet, some functions not working then
+>  🤔 I believe I've fixed most of the bugs (maybe all of the them).
+
+
+* [ ] check_type is not working properly in some cases
+> added a couple of lines to fix it temporarily
+
+* [ ] get_val_2 & get_virtual shall be combined. Yet, some functions are not working then
 >  * try to add flag <br>
->  * make it return list of virtual nodes to work with separately
+>  * let it return a list of virtual nodes to work with separately
 
-* [ ] do not declare multiple (seems to get something wrong <check logic>)
-~ $ java -version
-openjdk version "1.8.0_232"
-OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~16.04.1-b09)
-OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+* [ ] do not declare multiple (seems to get something wrong) - check logic [not informative]
 
 * [ ] backpatching not working when no labels
-
-~ $ javac -version
-javac 1.8.0_232
 
 ---
 
 ## Notes
-* what if num is neg (is that handled)
-* handle range to be general
+* what if num is neg (is that handled?)
+* handle range to be general (check phase 1)
 
+### Running Jasmin
 
-## Run Jasmin
-
-1. put your code in text file.j
-2. run the command
-bash`` java -jar jasmin.jar file.j ``
+1. put your code in .j file
+2. run the folowing command
+bash `` java -jar jasmin.jar file.j ``
 3. now a class file is generated, to run: `` java file ``
+
+---
+
+
+## [Memory] Plan (schedule)
+* Today: 14 May
+* Actual Deadline: ~~30 May~~ 6 Jun
+* Phase Deadline: 20 May
+
+> 3 days to just implement this<br>
+> 1 day for the report
+
+
+### Schedule:
+* 14 May 2020 Getting to know what's going on
+* 15 - 20 May 2020 : Build the program
+
